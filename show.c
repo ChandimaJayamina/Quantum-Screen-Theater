@@ -111,9 +111,38 @@ void addTheatreShow(void){
 
 
 void displayTheatreSchedule(void){
+    char check[15];
+    /*
+        Use to get show id
+    */ 
+    printf("Please enter the id of the show (max 49 characters): ");
+    // Use scanf to read the input string until newline is encountered
+    scanf(" %[^\n]", check);
+    printf("You entered: %s\n", check); 
     
+    Show show;
+    FILE *file = fopen("show_schedules.txt", "r+b");
+    if (file == NULL) {
+        perror("Failed to open file for reading");
+        exit(EXIT_FAILURE);
+    }
+    while (fread(&show, sizeof(Show), 1, file)) {
+        if (strcmp(show.show_id_str, check) == 0) {
+            printf("Show found\n");
+            printHall(&show.hall);
+        }
+    }
+    fclose(file);
 }
 
+void printHall(Theaterhall *hall) {
+    for (int i = 0; i < 17; i++) {
+        for (int j = 0; j < 17; j++) {
+            printf("%s ", hall->table[i][j].str);
+        }
+        printf("\n");
+    }
+}
 
 
 void reserveSeat(void){
@@ -151,9 +180,9 @@ int checkTimeSlot(const char *filename, const char *date, const char *time){
     fclose(file);
     return 1;
 }
-
-
-
+/*
+    This function used in addTheater function to get the time slot availability
+*/
 void writeShowToFile(const char *filename, Show *show) {
     FILE *file = fopen(filename, "ab"); // Append mode to write multiple entries
     if (file == NULL) {
@@ -164,160 +193,5 @@ void writeShowToFile(const char *filename, Show *show) {
     fwrite(show, sizeof(Show), 1, file);
 
     fclose(file);
-}
-
-// Read data from file
-void initializeShowFromFile(void) {
-
-    char curlabel[20];
-    // Getting the label
-    printf("Please enter the label of the show : ");
-    scanf(" %[^\n]", curlabel);
-    printf("You entered: %s\n", curlabel);
-
-    //Regex pattern creation
-    char regex_pattern[30];
-    sprintf(regex_pattern, "\\[%s\\].*",
-            curlabel);
-
-    FILE *file = fopen("show_schedules.txt", "r");
-    if (!file) {
-        perror("Failed to open file for reading");
-        exit(EXIT_FAILURE);
-    }
-
-    char line[1024];
-    pcre  *re;
-    const char *error;
-    int erroffset;
-    int ovector[30];
-
-    re = pcre_compile(regex_pattern, 0, &error, &erroffset, NULL); // get label regex patern
-    if (re == NULL) {
-        printf("PCRE compilation failed at offset %d: %s\n", erroffset, error);
-        exit(EXIT_FAILURE);
-    }
-    
-     // Read each line from the file and match it against the pattern
-    while (fgets(line, sizeof(line), file)) {
-        if (pcre_exec(re, NULL, line, strlen(line), 0, 0, ovector, 30) >= 0) {
-            printf("%s\n", line);
-
-            // Tokenize the line based on tabs
-            int MAX_TOKENS = 7;
-            char *token, *tok;
-            int token_count = 0;
-            char *tokens[MAX_TOKENS]; // Array to hold tokens
-            Show show;
-            
-            // Get the first token
-            token = strtok(line, "\t");
-            while (token != NULL && token_count < MAX_TOKENS) {
-                // Store the token in the tokens array
-                tokens[token_count++] = token;
-
-                // Get next token
-                token = strtok(NULL, "\t");
-                printf("Tokens :%d", token_count);
-            }
-            printf("Test line3\n");
-            // Process tokens
-            strncpy(show.label, tokens[0], sizeof(show.label) - 1);
-            show.label[sizeof(show.label) - 1] = '\0'; // Ensure null-terminated
-            printf("label : %s\n",show.label);
-            
-            strncpy(show.show_name_str, tokens[1], sizeof(show.show_name_str) - 1);
-            show.label[sizeof(show.show_name_str) - 1] = '\0'; // Ensure null-terminated
-            printf("Name : %s\n",show.show_name_str);
-
-            strncpy(show.show_id_str, tokens[2], sizeof(show.show_id_str) - 1);
-            show.label[sizeof(show.show_id_str) - 1] = '\0'; // Ensure null-terminated
-            printf("Id : %s\n",show.show_id_str);
-
-            strncpy(show.date, tokens[3], sizeof(show.date) - 1);
-            show.label[sizeof(show.date) - 1] = '\0'; // Ensure null-terminated
-            printf("Date : %s\n",show.date);
-
-            strncpy(show.time, tokens[3], sizeof(show.time) - 1);
-            show.label[sizeof(show.time) - 1] = '\0'; // Ensure null-terminated
-            printf("Time : %s\n",show.time);
-
-            
-            // Parse the seat information from tokens[6]
-            char *seat_info = tokens[6];
-            char *seat_row = strtok(seat_info, " ");
-            int row_index = 0;
-
-            while (seat_row != NULL && row_index < 17) {
-                for (int col_index = 0; col_index < 17; col_index++) {
-                    if (strcmp(seat_row, "*") == 0) {
-                        
-                        strcpy(show.hall.table[row_index][col_index].str, "*");
-                    } 
-                    else if(strcmp(seat_row, "01") == 0){
-                        strcpy(show.hall.table[row_index][col_index].str, " ");
-                        strcpy(show.hall.table[row_index][++col_index].str, "01");
-                    }
-                    else {
-                        // Assuming seats are marked as "A", "B", ..., "P"
-                        strcpy(show.hall.table[row_index][col_index].str, seat_row);
-                    }
-                    // Move to the next seat information
-                    seat_row = strtok(NULL, " ");
-                    if (seat_row == NULL) break;
-                }
-                row_index++;
-            }
-            // while(tok!=NULL){
-            //     if(tok==" "){
-            //         tok = strtok(NULL, " ");
-            //         continue;
-            //     }
-                // else if (tok >= '0' && tok <= '17'){
-                //     // if(row == 0 && col == 0){
-                //     //     strncpy(show.hall.table[row][col].str, " ", sizeof(show.hall.table[row][col].str) - 1);
-                //     //     show.hall.table[row][col].str[sizeof(show.hall.table[row][col].str) - 1] = '\0'; // Null-terminate
-                //     //     strncpy(show.hall.table[row][++col].str, tok, sizeof(show.hall.table[row][col].str) - 1);
-                //     //     show.hall.table[row][col].str[sizeof(show.hall.table[row][col].str) - 1] = '\0'; // Null-terminate
-                //     // } else{
-                //     //     strncpy(show.hall.table[row][col].str, tok, sizeof(show.hall.table[row][col].str) - 1);
-                //     //     show.hall.table[row][col].str[sizeof(show.hall.table[row][col].str) - 1] = '\0'; // Null-terminate
-                //     // }
-                //     printf("1 token %s", tok.str);
-                //     col++;
-                //     tok = strtok(NULL, " ");
-                // }
-                // else if(tok >= 'A' && tok <= 'P'){
-                //     // strncpy(show.hall.table[row][col].str, tok, sizeof(show.hall.table[row][col].str) - 1);
-                //     // show.hall.table[row][col].str[sizeof(show.hall.table[row][col].str) - 1] = '\0'; // Null-terminate
-                //     printf("A token %s", tok.str);
-                //     col++;
-                //     tok = strtok(NULL, " ");
-                // }
-                // else if(tok.str == "*" || *tok.str == "#" || *tok.str =="0"){
-                //     // strncpy(show.hall.table[row][col].str, tok, sizeof(show.hall.table[row][col].str) - 1);
-                //     // show.hall.table[row][col].str[sizeof(show.hall.table[row][col].str) - 1] = '\0'; // Null-terminate
-                //     printf("* token %s", tok.str);
-                //     col++;
-                //     tok = strtok(NULL, " ");
-                // } 
-                // else{
-                //     printf("Not identified symbol %s", tok);
-                //     return;
-                // }
-                
-            //}
-            
-
-            printf("1st row 1 seat : %s\n", show.hall.table[2][1].str);
-            printf("Test line5\n");
-        }
-    }
-
-
-    // Free the compiled regular expression
-    pcre_free(re);
-    fclose(file);
-
 }
 
