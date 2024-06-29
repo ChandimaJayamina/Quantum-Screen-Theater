@@ -2,7 +2,7 @@
 
 // Define a structure to identify seat
 typedef struct {
-    char str[3];
+    char str[5];
 }Seat;
 
 // Define theater hall
@@ -37,11 +37,8 @@ void writeShowToFile(const char *filename, Show *show);
 
 
 void displayTheatreSchedule(void);
-
+void printHall(Theaterhall *hall);
 
 
 void reserveSeat(void);
 
-
-// Use for play to read data from file and save it to show
-void initializeShowFromFile(void);
