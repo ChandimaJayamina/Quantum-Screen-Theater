@@ -9,11 +9,13 @@ void operationIdentifier(void){
     switch (tolower(character)) {
         case 'a':
             printf("You have selected option a \n\n");
+            //Add theatar show
             addTheatreShow();
             break;
         case 'b':
             printf("You have selected option b \n\n");
             //Display Theatre Schedule
+            displayTheatreSchedule();
             break;
         case 'c':
             printf("You have selected option c \n\n");
@@ -26,10 +28,6 @@ void operationIdentifier(void){
         case 'e':
             printf("You have selected option e \n\n");
             void exit(int status);
-            break;
-        case 'f':
-            printf("You have selected option f \n\n");
-            initializeShowFromFile();
             break;
         default:
             printf("You have selected wrong option please select an option given in menu\n\n");
