@@ -37,6 +37,7 @@ void writeShowToFile(const char *filename, Show *show);
 
 
 void displayTheatreSchedule(void);
+void displayTheatreReservation(void);
 void printHall(Theaterhall *hall);
 
 
