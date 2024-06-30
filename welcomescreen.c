@@ -15,15 +15,16 @@ void operationIdentifier(void){
         case 'b':
             printf("You have selected option b \n\n");
             //Display Theatre Schedule
-            displayTheatreSchedule();
             break;
         case 'c':
             printf("You have selected option c \n\n");
             //Display Theatre Reservations
+            displayTheatreReservation();
             break;
         case 'd':
             printf("You have selected option d \n\n");
             //Reserve Seats
+
             break;
         case 'e':
             printf("You have selected option e \n\n");
