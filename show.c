@@ -109,8 +109,20 @@ void addTheatreShow(void){
 }
 
 
-
 void displayTheatreSchedule(void){
+    
+}
+
+
+void reserveSeat(void){
+
+}
+
+
+/*
+    This function is defined to handle Display theter reservation by given show id
+*/
+void displayTheatreReservation(void){
     char check[15];
     /*
         Use to get show id
@@ -133,26 +145,6 @@ void displayTheatreSchedule(void){
         }
     }
     fclose(file);
-}
-
-void printHall(Theaterhall *hall) {
-    for (int i = 0; i < 17; i++) {
-        for (int j = 0; j < 17; j++) {
-            printf("%s ", hall->table[i][j].str);
-        }
-        printf("\n");
-    }
-}
-
-
-void reserveSeat(void){
-
-}
-
-
-
-void displayTheatreReservation(void){
-
 }
 
 
@@ -195,3 +187,14 @@ void writeShowToFile(const char *filename, Show *show) {
     fclose(file);
 }
 
+/*
+    This function is used by Display theter reservation by given show id
+*/
+void printHall(Theaterhall *hall) {
+    for (int i = 0; i < 17; i++) {
+        for (int j = 0; j < 17; j++) {
+            printf("%s ", hall->table[i][j].str);
+        }
+        printf("\n");
+    }
+}
