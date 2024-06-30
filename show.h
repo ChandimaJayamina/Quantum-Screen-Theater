@@ -12,8 +12,8 @@ typedef struct {
 
 
 typedef struct{
-    char show_name_str[50];   //The Merchant of Venice
-    char show_id_str[50];     //SHAKE_VEN_16_07
+    char id[50];     //SHAKE_VEN_16_07    
+    char name[50];   //The Merchant of Venice 
     char time[10] ;          // we are not store it in am and pm it will handle by 24 hours and print will handle it
     char date[15];
 
@@ -37,9 +37,13 @@ void writeShowToFile(const char *filename, Show *show);
 
 
 void displayTheatreSchedule(void);
+
 void displayTheatreReservation(void);
 void printHall(Theaterhall *hall);
 
 
 void reserveSeat(void);
+int charToNumber(char c);
+void removeWhiteSpacesandCapitalize(char *str);
+void parseSeat(char *seat, int *row, int *col);
 
