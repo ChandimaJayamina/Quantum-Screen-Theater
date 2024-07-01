@@ -1,13 +1,15 @@
 #include <pcre.h>
 
-// Define a structure to identify seat
+// Define the number of rows and columns
+#define ROWS 17
+#define COLS 20
+
 typedef struct {
     char str[5];
-}Seat;
+} Seat;
 
-// Define theater hall
 typedef struct {
-    Seat table[17][17];
+    Seat table[ROWS][COLS];
 } Theaterhall;
 
 
@@ -34,7 +36,7 @@ typedef struct{
 void addTheatreShow(void);
 int checkTimeSlot(const char *filename, const char *date, const char *time);
 void writeShowToFile(const char *filename, Show *show);
-
+void initializeShow(Show *show);
 
 void displayTheatreSchedule(void);
 
@@ -47,3 +49,14 @@ int charToNumber(char c);
 void removeWhiteSpacesandCapitalize(char *str);
 void parseSeat(char *seat, int *row, int *col);
 
+
+// Define an enumeration for time slots
+typedef enum {
+    SLOT_1, // 10:00 AM
+    SLOT_2, // 12:00 PM
+    SLOT_3, // 02:30 PM
+    SLOT_4, // 04:00 PM
+    SLOT_5  // 06:00 PM
+} TimeSlot;
+
+const char* timeSlotToString(TimeSlot slot);
