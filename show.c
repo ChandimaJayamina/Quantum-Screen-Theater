@@ -45,15 +45,6 @@ void addTheatreShow(void){
     printf("You entered: %s\n", currentShow.name);
 
     /*
-        Use to get show id
-    */ 
-    // need to string copy name_date_time - ---------------------------------------------------------------to do
-    printf("Please enter the id of the show (max 49 characters): ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", currentShow.id);
-    printf("You entered: %s\n", currentShow.id);
-
-    /*
         Use to get date
     */ 
     // Prompt the user for input
@@ -72,6 +63,14 @@ void addTheatreShow(void){
     printf("You entered: %s\n", currentShow.time);
     // -------------------------------------------------------------- to do user should give time in the show time list fixed times 
 
+    /*
+        Use to get show id
+    */ 
+    sprintf(currentShow.id, "[%s_%s_%s]",
+            currentShow.name,
+            currentShow.date, currentShow.time);
+    printf("ID : %s\n", currentShow.id);
+    
     /*
         Use to calculate revenue
     */
