@@ -4,38 +4,44 @@
 #include <ctype.h>
 #include "show.h"
 
+void initializeShow(Show *show) {
+    // Initialize first row with numbers
+    for (int j = 0; j < COLS; j++) {
+        if (j == 0) {
+            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "  ");
+        } else {
+            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "%02d", j);
+        }
+    }
 
+    // Initialize subsequent rows with letters and '*'
+    for (int i = 1; i < ROWS; i++) {
+        snprintf(show->hall.table[i][0].str, sizeof(show->hall.table[i][0].str), "%c ", 'A' + (i - 1));
+        for (int j = 1; j < COLS; j++) {
+            snprintf(show->hall.table[i][j].str, sizeof(show->hall.table[i][j].str), " *");
+        }
+    }
+}
+// Function to convert TimeSlot enum to string
+const char* timeSlotToString(TimeSlot slot) {
+    switch(slot) {
+        case SLOT_1: return "10:00 AM";
+        case SLOT_2: return "12:00 PM";
+        case SLOT_3: return "02:30 PM";
+        case SLOT_4: return "04:00 PM";
+        case SLOT_5: return "06:00 PM";
+        default: return "Unknown";
+    }
+}
 /*
     This function is defined to handle Add theter show to file 
 */
 void addTheatreShow(void){
     printf("Came to addTheatreShow method\n");
-    Show currentShow = {
-        .hall = {
-            .table = {
-        {{"  "},{"01"},{"02"},{"03"},{"04"},{"05"},{"06"},{"07"},{"08"},{"09"},{"10"},{"11"},{"12"},{"13"},{"14"},{"15"},{"16"}},
-        {{"A "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"B "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"C "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"D "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"E "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"F "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"G "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"H "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"I "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"J "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"K "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"L "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"M "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"N "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"O "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}},
-        {{"P "},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"},{" *"}}
-        }
-        }
-    };
-    // ----------------------------------------------------- to do make it dynamic 
 
-    
+    Show currentShow;
+    initializeShow(&currentShow);
+
     /*
         Use to get show name
     */ 
@@ -56,13 +62,35 @@ void addTheatreShow(void){
     /*
         Use to get time
     */ 
-    // Prompt the user for input
-    printf("Enter hours minutes and am/pm eg:8:30am : ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", currentShow.time);
-    printf("You entered: %s\n", currentShow.time);
-    // -------------------------------------------------------------- to do user should give time in the show time list fixed times 
+    TimeSlot selectedSlot;
+    // Display available time slots
+    printf("Please select Time Slot:\n");
+    printf("1. %s\n", timeSlotToString(SLOT_1));
+    printf("2. %s\n", timeSlotToString(SLOT_2));
+    printf("3. %s\n", timeSlotToString(SLOT_3));
+    printf("4. %s\n", timeSlotToString(SLOT_4));
+    printf("5. %s\n", timeSlotToString(SLOT_5));
+    // Prompt user to select a time slot
+    printf("Select a time slot (1-5): ");
+    int choice;
+    scanf("%d", &choice);
+    // Validate user input
+    switch(choice) {
+        case 1: selectedSlot = SLOT_1; break;
+        case 2: selectedSlot = SLOT_2; break;
+        case 3: selectedSlot = SLOT_3; break;
+        case 4: selectedSlot = SLOT_4; break;
+        case 5: selectedSlot = SLOT_5; break;
+        default:
+            printf("Invalid selection. goes with slot1");
+            selectedSlot = SLOT_1;
+    }
 
+    // Display selected time slot
+    sprintf(currentShow.time, "%s",
+            timeSlotToString(selectedSlot));
+    printf("You selected: %s\n", currentShow.time);
+    
     /*
         Use to get show id
     */ 
@@ -94,7 +122,9 @@ void addTheatreShow(void){
     }
 }
 
-
+/*
+    This function is defined to give theater details to user by date
+*/
 void displayTheatreSchedule(void){
     /*
         Use to get date
@@ -123,7 +153,6 @@ void displayTheatreSchedule(void){
     }
     fclose(file);
 }
-
 
 /*
     This function is defined to handle theter seat reservation by given show id
@@ -155,7 +184,7 @@ void reserveSeat(void){
         }
     }
     printf("show date %s\n", show.date);
-
+    printf("A1 seat : %s", show.hall.table[1][1].str);
     /*
         Use to get seat category
     */ 
@@ -230,20 +259,24 @@ void reserveSeat(void){
     if (index != -1) {
         printf("Before for loop\n");
         int i = 0;
-        while(row[i] != 0){
-            strcpy(show.hall.table[row[i]][col[i]].str, action);
-            i++;
-
+        for (int i = 0; i < token_count; ++i) {
+            int r = row[i];
+            int c = col[i];
+            strcpy(show.hall.table[r][c].str, action);
         }
+        printf("Before for loop\n");
         // Seek to the position of the struct to modify
         fseek(file, index, SEEK_SET);
+        printf("Before for loop\n");
         // Write the modified struct back to the file
-        fwrite(&show, sizeof(show), 1, file);
-        printf("Write Success");
+        if (fwrite(&show, sizeof(Show), 1, file) != 1) {
+            perror("Error writing to file");
+        } else {
+            printf("Write Success\n");
+        }
     }
     fclose(file);
 }
-
 
 /*
     This function is defined to handle Display theter reservation by given show id
@@ -278,6 +311,8 @@ void displayTheatreReservation(void){
     }
     fclose(file);
 }
+
+
 
 
 /*
@@ -350,7 +385,6 @@ void removeWhiteSpacesandCapitalize(char *str) {
     This function is used by reserve seat function
     Function to convert a seat string (e.g., "A14") into row and column integers
 */
- 
 void parseSeat(char *seat, int *row, int *col) {
     removeWhiteSpacesandCapitalize(seat);       // Remove any white spaces from the seat string
     // Convert the row character to an integer (A -> 1, B -> 2, ..., Z -> 26)
@@ -358,5 +392,4 @@ void parseSeat(char *seat, int *row, int *col) {
     // Convert the remaining part of the seat string to an integer for the column
     *col = atoi(seat + 1);
 }
-
 
