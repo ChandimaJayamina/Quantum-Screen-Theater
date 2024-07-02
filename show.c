@@ -37,7 +37,7 @@ const char* timeSlotToString(TimeSlot slot) {
     This function is defined to handle Add theter show to file 
 */
 void addTheatreShow(void){
-    printf("Came to addTheatreShow method\n");
+    printf("----- Add Theatre Show ----- \n");
 
     Show currentShow;
     initializeShow(&currentShow);
@@ -82,7 +82,8 @@ void addTheatreShow(void){
         case 4: selectedSlot = SLOT_4; break;
         case 5: selectedSlot = SLOT_5; break;
         default:
-            printf("Invalid selection. goes with slot1");
+            printf("Invalid selection. goes with slot1"); 
+            // todo - for invalid selection let's show the current shows for that date and ask again?
             selectedSlot = SLOT_1;
     }
 
@@ -102,23 +103,21 @@ void addTheatreShow(void){
     /*
         Use to calculate revenue
     */
-   currentShow.revenue = 0;
+    currentShow.revenue = 0;
 
-    /*  To do --------------------------------------------------------------------------------
-    seat availableVIP[50];
-    seat availableVVIP[50];
-    seat availableEconomy[50];
-    seat availableTwin[50];
-    */
+
+    populateSeats(&currentShow);
 
     /*
         Check is the time slot available by using regex pattern 
     */
     if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
-        printf("Time slot not found");
+        printf("Time slot is available!\n");
+        printf("Adding show to the schedule.\n");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
-        printf("Time slot found so not added the show to schedule");
+        printf("Time slot is already booked for another show.\n");
+        // todo - Should we ask if they want to overide this time?
     }
 }
 
@@ -126,12 +125,13 @@ void addTheatreShow(void){
     This function is defined to give theater details to user by date
 */
 void displayTheatreSchedule(void){
+    printf("----- Display Theatre Schedule ----- \n");
     /*
         Use to get date
     */ 
     char date[15];
     // Prompt the user for input
-    printf("Enter date by year-month-date eg:2024-06-20: ");
+    printf("Enter date in format YYYY-MM-DD eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", date);
     printf("You entered: %s\n", date); 
@@ -143,14 +143,29 @@ void displayTheatreSchedule(void){
         perror("Failed to open file for reading");
         exit(EXIT_FAILURE);
     }
-    Show show;
 
+    Show show;
+    Show matchingShows[5]; // Only 5 time slots are available per day.
+    int count = 0;
     while (fread(&show, sizeof(Show), 1, file)) {
-        printf("File found %s %s", show.date, show.time);
         if (strcmp(show.date, date) == 0) {
+            if (count < 5) {
+                matchingShows[count++] = show;
+            } else {
+                printf("Too many matching shows on this date; some may be omitted.\n");
+                break;
+            }
+        }
+    }
+
+    if (count == 0) {
+        printf("No shows found on this date!\n");
+    } else {
+        for (int i = 0; i < count; i++) {
             printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
         }
     }
+
     fclose(file);
 }
 
@@ -158,124 +173,140 @@ void displayTheatreSchedule(void){
     This function is defined to handle theter seat reservation by given show id
 */
 void reserveSeat(void){
-    /*
-        Use to get show id
-    */ 
     char showId[15];
-    printf("Please enter the id of the show (max 49 characters) to reserve seat : ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", showId);
-    printf("You entered: %s\n", showId); 
-    // --- -----------------------------------to do remove spaces front and end
+    printf("Please enter the show ID : ");
+    scanf(" %[^\n]", showId); // todo - trim whitespace
 
-    // Display Available Seats ---------------------------------------- todo
-    FILE *file = fopen("show_schedules.txt", "r+b");  // Open file in read-write mode
-    if (file == NULL) {
-        perror("Unable to open file");
-        exit(EXIT_FAILURE);
-    }
+    char requiredSeatNumber[3];  // maximum allowed seat bookings will be 340
+    printf("Please enter number of seats required : ");
+    scanf(" %[^\n]", requiredSeatNumber);
+
+   
+    // Define the array of seat category options
+    char seatCategory[15];
+
+    printf("Please enter the Desired seat category (VVIP, VIP, Twin, Economy') : ");
+    scanf(" %[^\n]", seatCategory);
+    // todo add validation for these
+
+    FILE *file = getFile("r+b");
     Show show;
     long index = -1;
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.id, showId) == 0) {
-            printf("Show found\n");
+            printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
+            findAvailableSeats(&show.hall);
             index = ftell(file) - sizeof(Show);
+
+            printAvailableSeats(&show, seatCategory);
+
+            char seats[15];
+            printf("Please enter the seats need to reserve seprated by comma (C5, E5): ");
+            // Use scanf to read the input string until newline is encountered
+            scanf(" %[^\n]", seats);
+            printf("You entered: %s\n", seats); 
+            
+            char action[5];
+            printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
+            // Use scanf to read the input string until newline is encountered
+            scanf(" %[^\n]", action);
+            printf("You entered: %s\n", action); 
+
+            // Move existing characters to make space for an additional character
+            memmove(action + 1, action, strlen(action) + 1);
+            // Set the first character to a space
+            action[0] = ' ';
+
+            //Get the array position
+            // Tokenize the line based on comma
+            const int max_tokens = 200; //update with maximum for the type
+            int row[max_tokens]; // Initialize row array with zeros
+            int col[max_tokens]; // Initialize col array with zeros
+
+            int i = 0;
+            while(i < max_tokens){
+                row[i] = 0;
+                col[i] = 0;
+                i++;
+            }
+
+            char *token;
+            int token_count = 0;
+            
+            // Tokenize the seats string based on commas
+            token = strtok(seats, ",");
+            while (token != NULL && token_count < max_tokens) {
+                parseSeat(token, &row[token_count], &col[token_count]);
+                token_count++;
+                token = strtok(NULL, ",");
+                
+                if(strcmp(seatCategory, "twin") == 0){
+                    for (int i = 0; i < 22; ++i) {
+                        if (strcmp(token, show.availableTwin[i].str) == 0) {
+                            strcpy(show.availableTwin[i].str, "");
+                            // todo allow only booking as doubles
+                            show.revenue += 1000;
+                            break;
+                        }
+                    }
+                } else if(strcmp(seatCategory, "vvip") == 0){
+                    for (int i = 0; i < 98; i++) {
+                        if (strcmp(token, show.availableVVIP[i].str) == 0) {
+                            strcpy(show.availableVVIP[i].str, "");
+                            show.revenue += 5000;
+                            break;
+                        }
+                    }
+                } else if(strcmp(seatCategory, "vip") == 0){
+                    for (int i = 0; i < 120; i++) {
+                        if (strcmp(token, show.availableVIP[i].str) == 0) {
+                            strcpy(show.availableVIP[i].str, "");
+                            show.revenue += 2000;
+                            break;
+                        }
+                    }
+                } else if(strcmp(seatCategory, "economy") == 0){
+                    for (int i = 0; i < 80; i++) {
+                        if (strcmp(token, show.availableEconomy[i].str) == 0) {
+                            strcpy(show.availableEconomy[i].str, "");
+                            show.revenue += 500;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Change seats if a valid index is provided
+            if (index != -1) {
+                for (int i = 0; i < token_count; ++i) {
+                    int r = row[i];
+                    int c = col[i];
+                    strcpy(show.hall.table[r][c].str, action);
+                }
+                // Seek to the position of the struct to modify
+                fseek(file, index, SEEK_SET);
+
+                writeShowToFile("show_schedules.txt", &show);
+            }
+
+            printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
+            findAvailableSeats(&show.hall);
             break;
         }
+
+        printf("No show available by this ID!");
     }
-    printf("show date %s\n", show.date);
-    printf("A1 seat : %s", show.hall.table[1][1].str);
-    /*
-        Use to get seat category
-    */ 
-    char seatCategory[15];
-    printf("Please enter the Desired seat category (VVIP, VIP, Twin, Economy) : ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", seatCategory);
-    printf("You entered: %s\n", seatCategory);
-
-    // ---------------------------------------- print the available seats for the given category
-
-    /*
-        Use to get number of seats
-    */ 
-    int numberofSeats;
-    printf("Please enter the  number of seats required: ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %d", &numberofSeats);
-    printf("You entered: %d\n", numberofSeats); 
-
-
-    /*
-        Use to get seats
-    */ 
-    char seats[15];
-    printf("Please enter the seats need to reserve by comma seperate (C5, E5): ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", seats);
-    printf("You entered: %s\n", seats); 
-
-     /*
-        Use to get seat action
-    */ 
-    char action[5];
-    printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", action);
-    printf("You entered: %s\n", action); 
-    // Move existing characters to make space for an additional character
-    memmove(action + 1, action, strlen(action) + 1);
-    // Set the first character to a space
-    action[0] = ' ';
-    //  ------------------------------------------------------ to do if cancel reservation go out from the function 
-
-
-
-    //Get the array position
-    // Tokenize the line based on comma
-    int MAX_TOKENS = 7;                                     // ----------------------------need to change according to maximum seats for VIP or others
-    char *token;
-    int token_count = 0;
-    char *tokens[MAX_TOKENS]; // Array to hold tokens
-    int row[MAX_TOKENS], col[MAX_TOKENS]; // Add rows and cols to change
-    int i = 0;
-    while (i < MAX_TOKENS) { // Stop the loop if a 0 is encountered
-            row[i] = 0;
-            col[i] = 0;
-            i++;
-    }
-    // Get the first token
-    token = strtok(seats, ",");
-    while (token != NULL && token_count < MAX_TOKENS) {
-        // Store the token in the tokens array
-        parseSeat(token, &row[token_count], &col[token_count]);
-        printf("Token :%s\n", token);
-        tokens[token_count++] = token;
-        // Get next token
-        token = strtok(NULL, ",");
-    }
-    printf("Index %ld\n", index);
-    //Change seat
-    if (index != -1) {
-        printf("Before for loop\n");
-        int i = 0;
-        for (int i = 0; i < token_count; ++i) {
-            int r = row[i];
-            int c = col[i];
-            strcpy(show.hall.table[r][c].str, action);
-        }
-        printf("Before for loop\n");
-        // Seek to the position of the struct to modify
-        fseek(file, index, SEEK_SET);
-        printf("Before for loop\n");
-        // Write the modified struct back to the file
-        if (fwrite(&show, sizeof(Show), 1, file) != 1) {
-            perror("Error writing to file");
-        } else {
-            printf("Write Success\n");
-        }
-    }
+   
     fclose(file);
+}
+
+void findAvailableSeats(Theaterhall *hall) {
+    for (int i = 0; i < 17; i++) {
+        for (int j = 0; j < 21; j++) {
+            printf("%s ", hall->table[i][j].str);
+        }
+        printf("\n");
+    }
 }
 
 /*
@@ -313,19 +344,17 @@ void displayTheatreReservation(void){
 }
 
 
-
-
 /*
     This function used in addTheater function to get the time slot availability
 */
 int checkTimeSlot(const char *filename, const char *date, const char *time){
     FILE *file = fopen(filename, "r+b");
     if (file == NULL) {
-        perror("Failed to open file for reading");
+        perror("Failed to open file for reading\n");
         exit(EXIT_FAILURE);
     }
     Show show;
-    printf("Checking %s %s", date,time);
+    printf("Checking %s %s\n", date,time);
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.date, date) == 0 && strcmp(show.time, time) == 0) {
             return 0;
@@ -353,7 +382,7 @@ void writeShowToFile(const char *filename, Show *show) {
 */
 void printHall(Theaterhall *hall) {
     for (int i = 0; i < 17; i++) {
-        for (int j = 0; j < 17; j++) {
+        for (int j = 0; j < 21; j++) {
             printf("%s ", hall->table[i][j].str);
         }
         printf("\n");
@@ -381,6 +410,7 @@ void removeWhiteSpacesandCapitalize(char *str) {
         str[0] = toupper((unsigned char)str[0]);
     }
 }
+
 /*
     This function is used by reserve seat function
     Function to convert a seat string (e.g., "A14") into row and column integers
@@ -393,3 +423,91 @@ void parseSeat(char *seat, int *row, int *col) {
     *col = atoi(seat + 1);
 }
 
+/*
+    This function is used for initialization of show
+    to convert row and column integers to the seat string
+*/
+void formatSeat(int row, int col, char *seat) {
+    // Convert the row number back to a character (1 -> A, 2 -> B, ..., 26 -> Z)
+    seat[0] = 'A' + row - 1;
+    // Convert the column number to a string and concatenate it
+    sprintf(seat + 1, "%d", col);
+    seat[4] = '\0'; // Ensure the seat string is null-terminated
+}
+
+/*
+    Open and fetch file
+*/
+FILE* getFile(char *action) {
+    FILE *file = fopen("show_schedules.txt", action);  // Open file in read-write mode
+    if (file == NULL) {
+        perror("Unable to open file");
+        exit(EXIT_FAILURE);
+    }
+
+    return file;
+}
+
+void populateSeats(Show *show) {
+    int vipCount = 0, vvipCount = 0, economyCount = 0, twinCount = 0;
+
+    for (int row = 1; row < ROWS; row++) {
+        for (int col = 1; col < COLS; col++) {
+            char seat[5];
+            formatSeat(row, col, seat);
+
+            if ((row == 0 || row == 1) && col >= 4 && col <= 14) {
+                // Twin seats
+                strcpy(show->availableTwin[twinCount++].str, seat);
+            } else if (row <= 5) {
+                // VVIP seats
+                strcpy(show->availableVVIP[vvipCount++].str, seat);
+            } else if (row <= 11) {
+                // VIP seats
+                strcpy(show->availableVIP[vipCount++].str, seat);
+            } else {
+                // Economy seats
+                strcpy(show->availableEconomy[economyCount++].str, seat);
+            }
+        }
+    }
+}
+
+void printAvailableSeats(Show *show, char *seatCategory){
+
+    if(strcmp(seatCategory, "twin") == 0){
+        printf("Available Twin seats:\n");
+        for (int i = 0; i < 22; i++) {
+            printf("%s ", show->availableTwin[i].str);
+        }
+        printf("\n");
+        return;
+    }
+
+    if(strcmp(seatCategory, "vvip") == 0){
+        printf("Available VVIP seats:\n");
+        for (int i = 0; i < 98; i++) {
+            printf("%s ", show->availableVVIP[i].str);
+        }
+        printf("\n");
+        return;
+    }
+
+    if(strcmp(seatCategory, "vip") == 0){
+        printf("Available VIP seats:\n");
+        for (int i = 0; i < 120; i++) {
+            printf("%s ", show->availableVIP[i].str);
+        }
+        printf("\n");
+        return;
+    }
+
+    if(strcmp(seatCategory, "economy") == 0){
+        printf("Available Economy seats:\n");
+        for (int i = 0; i < 80; i++) {
+            printf("%s ", show->availableEconomy[i].str);
+        }
+        printf("\n");
+        return;
+    }
+}
