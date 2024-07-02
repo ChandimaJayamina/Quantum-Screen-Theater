@@ -3,7 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 #include "show.h"
-
+#include "welcomescreen.h" 
+// Creation of 2D array
 void initializeShow(Show *show) {
     // Initialize first row with numbers
     for (int j = 0; j < COLS; j++) {
@@ -33,6 +34,47 @@ const char* timeSlotToString(TimeSlot slot) {
         default: return "Unknown";
     }
 }
+
+// Function to remove leading and trailing spaces
+void trimSpaces(char *str) {
+    char *end;
+
+    // Trim leading space
+    while (isspace((unsigned char)*str)) str++;
+
+    // All spaces?
+    if (*str == 0) {
+        str[0] = '\0';
+        return;
+    }
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) end--;
+
+    // Write new null terminator character
+    end[1] = '\0';
+}
+
+//Function to redirect main page
+void goToMainPage(void){ 
+    char character;
+    printf("\nPlease select one option \n 1: main page press M \n 2: quit press Q \n:");
+    scanf(" %c", &character);  // Note the space before %c to consume any leftover newline
+    switch (tolower(character)) {
+        case 'm':
+            printf("You will redirect to main page \n\n");
+            welcome();
+            break;
+        case 'q':
+            printf("Exit from application \n\n");
+            break;
+        default:
+            printf("You have selected wrong option redirect to main menu\n\n");
+            welcome();
+    }
+}
+
 /*
     This function is defined to handle Add theter show to file 
 */
@@ -48,6 +90,7 @@ void addTheatreShow(void){
     printf("Please enter the name of the show (max 49 characters): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", currentShow.name);
+    trimSpaces(currentShow.name);
     printf("You entered: %s\n", currentShow.name);
 
     /*
@@ -120,6 +163,7 @@ void addTheatreShow(void){
     }else{
         printf("Time slot found so not added the show to schedule");
     }
+    goToMainPage();
 }
 
 /*
@@ -152,6 +196,7 @@ void displayTheatreSchedule(void){
         }
     }
     fclose(file);
+    goToMainPage();
 }
 
 /*
@@ -165,8 +210,8 @@ void reserveSeat(void){
     printf("Please enter the id of the show (max 49 characters) to reserve seat : ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", showId);
+    trimSpaces(showId);
     printf("You entered: %s\n", showId); 
-    // --- -----------------------------------to do remove spaces front and end
 
     // Display Available Seats ---------------------------------------- todo
     FILE *file = fopen("show_schedules.txt", "r+b");  // Open file in read-write mode
@@ -197,7 +242,7 @@ void reserveSeat(void){
     // ---------------------------------------- print the available seats for the given category
 
     /*
-        Use to get number of seats
+        Use to get number of seatsss
     */ 
     int numberofSeats;
     printf("Please enter the  number of seats required: ");
@@ -223,11 +268,18 @@ void reserveSeat(void){
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", action);
     printf("You entered: %s\n", action); 
+    if ( strcmp(action, "#") == 0 ) {
+        printf("Action is: reserve with pay\n");
+    } else if (strcmp(tolower(action), "o") == 0 ){
+        printf("Action is: reserve without pay\n");
+    }else{
+        printf("Cancel the reservation");
+        goToMainPage();
+    }
     // Move existing characters to make space for an additional character
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
-    //  ------------------------------------------------------ to do if cancel reservation go out from the function 
 
 
 
@@ -276,6 +328,7 @@ void reserveSeat(void){
         }
     }
     fclose(file);
+    goToMainPage();
 }
 
 /*
@@ -289,8 +342,8 @@ void displayTheatreReservation(void){
     printf("Please enter the id of the show (max 49 characters): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", check);
+    trimSpaces(check);
     printf("You entered: %s\n", check); 
-    // --- -----------------------------------to do remove spaces front and end
     
     Show show;
     FILE *file = fopen("show_schedules.txt", "r+b");
@@ -310,6 +363,7 @@ void displayTheatreReservation(void){
         printf("Show not found\n");
     }
     fclose(file);
+    goToMainPage();
 }
 
 
@@ -392,4 +446,3 @@ void parseSeat(char *seat, int *row, int *col) {
     // Convert the remaining part of the seat string to an integer for the column
     *col = atoi(seat + 1);
 }
-
