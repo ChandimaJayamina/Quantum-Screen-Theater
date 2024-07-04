@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include "show.h"
 #include "welcomescreen.h" 
+#include "validations.h"
+
 // Creation of 2D array
 void initializeShow(Show *show) {
     // Initialize first row with numbers
@@ -100,6 +102,10 @@ void addTheatreShow(void){
     printf("Enter show date by year-month-date eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", currentShow.date);
+    trimSpaces(currentShow.date);
+    isValidDate(currentShow.name);
+
+
     printf("You entered: %s\n", currentShow.date);
 
     /*
