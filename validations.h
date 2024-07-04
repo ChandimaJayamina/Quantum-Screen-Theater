@@ -1,3 +1,5 @@
-#include <stdbool.h>
+#include <stdio.h>
+#include <time.h>
 
-bool isValidDate(const char *date);
+
+int isValidDate(char *date);
