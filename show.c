@@ -304,7 +304,7 @@ void reserveSeat(void){
 
     //Get the array position
     // Tokenize the line based on comma
-    int MAX_TOKENS = 7;                                     // ----------------------------need to change according to maximum seats for VIP or others
+    const int MAX_TOKENS = 7;                                     // ----------------------------need to change according to maximum seats for VIP or others
     char *token;
     int token_count = 0;
     char *tokens[MAX_TOKENS]; // Array to hold tokens
