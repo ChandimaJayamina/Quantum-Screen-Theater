@@ -11,7 +11,7 @@
     This function is defined to handle Add theter show to file 
 */
 void addTheatreShow(void){
-    printf("Came to addTheatreShow method\n");
+    printf("----- Add Theatre Show ----- \n");
 
     Show currentShow;
     initializeShow(&currentShow);
@@ -46,38 +46,48 @@ void addTheatreShow(void){
     printf("3. %s\n", timeSlotToString(SLOT_3));
     printf("4. %s\n", timeSlotToString(SLOT_4));
     printf("5. %s\n", timeSlotToString(SLOT_5));
+    printf("6. Go to main menu \n");
     // Prompt user to select a time slot
-    printf("Select a time slot (1-5): ");
     int choice;
-    scanf("%d", &choice);
-    // Validate user input
-    switch(choice) {
-        case 1: selectedSlot = SLOT_1; break;
-        case 2: selectedSlot = SLOT_2; break;
-        case 3: selectedSlot = SLOT_3; break;
-        case 4: selectedSlot = SLOT_4; break;
-        case 5: selectedSlot = SLOT_5; break;
-        default:
-            printf("Invalid selection. goes with slot1");
-            selectedSlot = SLOT_1;
-    }
+    int checkForFileWrite = 0;
+    do{
+        int validSelection = 0;
+        do{
+            printf("Select a time slot (1-5): ");
+            scanf("%d", &choice);
+            // Validate user input
+            switch(choice) {
+                case 1: selectedSlot = SLOT_1; validSelection=1; break;
+                case 2: selectedSlot = SLOT_2; validSelection=1; break;
+                case 3: selectedSlot = SLOT_3; validSelection=1; break;
+                case 4: selectedSlot = SLOT_4; validSelection=1; break;
+                case 5: selectedSlot = SLOT_5; validSelection=1; break;
+                case 6: goToMainPage(); break;
+                default:
+                    printf("Invalid selection Try again \n ");
+            } 
+        } while(!validSelection) ;    
+        // Display selected time slot
+        sprintf(currentShow.time, "%s", timeSlotToString(selectedSlot));
+        printf("You selected: %s\n", currentShow.time);
+       
+        //  Check is the time slot available by using regex pattern 
+        if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
+            checkForFileWrite=1;
+        }else{
+            printf("\nThere is a show for given Time slot, please check another time slot here are the shows for given date \n");
+            displayTheatreScheduleForDate(currentShow.date);
+        }
+    }while(!checkForFileWrite);
 
-    // Display selected time slot
-    sprintf(currentShow.time, "%s",
-            timeSlotToString(selectedSlot));
-    printf("You selected: %s\n", currentShow.time);
     
-    /*
-        Use to get show id
-    */ 
+    //  Use to get show id
     sprintf(currentShow.id, "[%s_%s_%s]",
             currentShow.name,
             currentShow.date, currentShow.time);
     printf("ID : %s\n", currentShow.id);
     
-    /*
-        Use to calculate revenue
-    */
+    //  Use to calculate revenue
     currentShow.revenue = 0;
 
     /*  To do --------------------------------------------------------------------------------
@@ -89,11 +99,11 @@ void addTheatreShow(void){
 
     
     //  Check is the time slot available by using regex pattern 
-    if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
+    if(checkForFileWrite){
         printf("\n Show successfully added to schedule");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
-        printf("Time slot found so not added the show to schedule");
+        printf("Error occurs when adding the show");
     }
     goToMainPage();
 }
@@ -475,4 +485,27 @@ void restart_program() {
     // If execvp returns, it must have failed
     perror("execvp");
     exit(EXIT_FAILURE);
+}
+
+void displayTheatreScheduleForDate(const char *date){
+    printf("Check the Shows for Date : %s\n", date); 
+
+    // Printing the output from the file
+    FILE *file = fopen("show_schedules.txt", "r+b");
+    if (file == NULL) {
+        perror("Failed to open file for reading");
+        exit(EXIT_FAILURE);
+    }
+    Show show;
+    int found = 0;
+    while (fread(&show, sizeof(Show), 1, file)) {
+        if (strcmp(show.date, date) == 0) {
+            printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No shows found for the specified date.\n");
+    }
+    fclose(file);
 }
