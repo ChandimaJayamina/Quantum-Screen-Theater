@@ -1,5 +1,3 @@
-
-
 // Define the number of rows and columns
 #define ROWS 17
 #define COLS 21
@@ -14,15 +12,15 @@ typedef struct {
 
 
 typedef struct{
-    char id[50];     //SHAKE_VEN_16_07    
-    char name[50];   //The Merchant of Venice 
-    char time[10] ;          // we are not store it in am and pm it will handle by 24 hours and print will handle it
+    char id[50];       
+    char name[50];  
+    char time[10] ;        
     char date[15];
 
-    Seat availableVIP[50];    //can be linked list
-    Seat availableVVIP[50];
-    Seat availableEconomy[50];
-    Seat availableTwin[50];
+    Seat availableTwin[22];
+    Seat availableVVIP[98];
+    Seat availableVIP[120];
+    Seat availableEconomy[80];
 
     Theaterhall hall;
 
