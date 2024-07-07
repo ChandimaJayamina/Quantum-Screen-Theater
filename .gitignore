@@ -1,0 +1,6 @@
+src
+src\.vs\*
+.vscode
+CMakeCache.txt
+CMakeFiles
+*.exe
