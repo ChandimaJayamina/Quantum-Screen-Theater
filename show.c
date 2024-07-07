@@ -452,6 +452,18 @@ void goToMainPage(void){
             break;
         default:
             printf("You have selected wrong option redirect to main menu\n\n");
-            welcome();
+            restart_program();
     }
+}
+
+void restart_program() {
+    // Get the current program name and arguments
+    char *argv[] = { "./app", NULL };
+    
+    // Replace the current process with a new instance of the same program
+    execvp(argv[0], argv);
+    
+    // If execvp returns, it must have failed
+    perror("execvp");
+    exit(EXIT_FAILURE);
 }
