@@ -18,8 +18,7 @@ int isValidDate(char *date) {
     // Convert it to local time representation
     struct tm *local = localtime(&now);
 
-    // Check for current date and future dates, will throw a exception if date is expired
-    if (year < local->tm_year + 1900 || month < local->tm_mon + 1 || month > 12 || day < local->tm_mday || day > 31) {
+    if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31) {
         return 0;  // Invalid values
     }
     
