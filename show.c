@@ -4,8 +4,6 @@
 #include <ctype.h>
 #include "show.h"
 #include "welcomescreen.h" 
-#include "validations.h"
-
 
 /*
     This function is defined to handle Add theter show to file 
@@ -28,19 +26,10 @@ void addTheatreShow(void){
     /*
         Use to get date
     */ 
-    do{
-        // Prompt the user for input
-        printf("Enter show date by year-month-date eg:2024-06-20: ");
-        // Use scanf to read the input string until newline is encountered
-        scanf(" %[^\n]", currentShow.date);
-        trimSpaces(currentShow.date);
-        if(isValidDate(currentShow.date) == 0) {
-            printf("%s is not a valid date.\n", currentShow.date);
-        }
-    } while (isValidDate(currentShow.date));
-
-
-
+    // Prompt the user for input
+    printf("Enter show date by year-month-date eg:2024-06-20: ");
+    // Use scanf to read the input string until newline is encountered
+    scanf(" %[^\n]", currentShow.date);
     printf("You entered: %s\n", currentShow.date);
 
     /*
@@ -57,35 +46,18 @@ void addTheatreShow(void){
     // Prompt user to select a time slot
     printf("Select a time slot (1-5): ");
     int choice;
-    int timeSlotValidated = 1;
-    do {    
-        scanf("%d", &choice);
-        // Validate user input
-        switch(choice) {
-            case 1: 
-                selectedSlot = SLOT_1; 
-                timeSlotValidated = 0;
-                break;
-            case 2: 
-                selectedSlot = SLOT_2; 
-                timeSlotValidated = 0;
-                break;
-            case 3: 
-                selectedSlot = SLOT_3; 
-                timeSlotValidated = 0;
-                break;
-            case 4: 
-                selectedSlot = SLOT_4; 
-                timeSlotValidated = 0;
-                break;
-            case 5: 
-                selectedSlot = SLOT_5; 
-                timeSlotValidated = 0;
-                break;
-            default:
-                printf("Invalid selection. goes with slot1");
-        } 
-    } while(timeSlotValidated);
+    scanf("%d", &choice);
+    // Validate user input
+    switch(choice) {
+        case 1: selectedSlot = SLOT_1; break;
+        case 2: selectedSlot = SLOT_2; break;
+        case 3: selectedSlot = SLOT_3; break;
+        case 4: selectedSlot = SLOT_4; break;
+        case 5: selectedSlot = SLOT_5; break;
+        default:
+            printf("Invalid selection. goes with slot1");
+            selectedSlot = SLOT_1;
+    }
 
     // Display selected time slot
     sprintf(currentShow.time, "%s",
@@ -116,7 +88,7 @@ void addTheatreShow(void){
         Check is the time slot available by using regex pattern 
     */
     if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
-        printf("Time slot not found, added show to schedule");
+        printf("Time slot not found");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
         printf("Time slot found so not added the show to schedule");
@@ -132,18 +104,10 @@ void displayTheatreSchedule(void){
         Use to get date
     */ 
     char date[15];
-     do{
-        // Prompt the user for input
-        printf("Enter show date by year-month-date eg:2024-06-20: ");
-        // Use scanf to read the input string until newline is encountered
-        scanf(" %[^\n]", date);
-        trimSpaces(date);
-        if(isValidDate(date) == 0) {
-            printf("%s is not a valid date.\n", date);
-        }
-    } while (isValidDate(date));
-
-
+    // Prompt the user for input
+    printf("Enter date by year-month-date eg:2024-06-20: ");
+    // Use scanf to read the input string until newline is encountered
+    scanf(" %[^\n]", date);
     printf("You entered: %s\n", date); 
     // ------------------------------------- to do regex validate
 
@@ -230,10 +194,10 @@ void reserveSeat(void){
         Use to get seat action
     */ 
     char action[5];
+    toLowerString(action);
     printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", action);
-    toLowerString(action);
     printf("You entered: %s\n", action); 
     if ( strcmp(action, "#") == 0 ) {
         printf("Action is: reserve with pay\n");
@@ -318,20 +282,22 @@ void displayTheatreReservation(void){
         perror("Failed to open file for reading");
         exit(EXIT_FAILURE);
     }
-    int flagShowNotFound = 1;
+    int flagFound = 1;
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.id, check) == 0) {
             printf("Show found\n");
-            flagShowNotFound = 0;
+            flagFound = 0;
             printHall(&show.hall);
         }
     }
-    if(flagShowNotFound){
+    if(flagFound){
         printf("Show not found\n");
     }
     fclose(file);
     goToMainPage();
 }
+
+
 
 
 /*
@@ -412,6 +378,12 @@ void parseSeat(char *seat, int *row, int *col) {
     *col = atoi(seat + 1);
 }
 
+// This is used to lower the string inputs
+void toLowerString(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char) str[i]);
+    }
+}
 
 // Creation of 2D array
 void initializeShow(Show *show) {
@@ -481,12 +453,5 @@ void goToMainPage(void){
         default:
             printf("You have selected wrong option redirect to main menu\n\n");
             welcome();
-    }
-}
-
-// This is used to lower the string inputs
-void toLowerString(char *str) {
-    for (int i = 0; str[i]; i++) {
-        str[i] = tolower((unsigned char) str[i]);
     }
 }
