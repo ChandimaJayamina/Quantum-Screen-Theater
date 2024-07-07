@@ -2,7 +2,7 @@
 
 // Define the number of rows and columns
 #define ROWS 17
-#define COLS 20
+#define COLS 21
 
 typedef struct {
     char str[5];
