@@ -64,3 +64,12 @@ const char* timeSlotToString(TimeSlot slot);
 void trimSpaces(char *str);
 void goToMainPage(void);
 void restart_program(void);
+void displayTheatreScheduleForDate(const char *date);
+
+
+void formatSeat(int row, int col, char *seat);
+FILE* getFile(char *action);
+void findAvailableSeats(Theaterhall *hall);
+void populateSeats(Show *show);
+void printAvailableSeats(Show *show, char *seatCategory);
+//Show updateAvailableSeatsAndRevenue(char *seat, Show *show, char *seatCategory);
