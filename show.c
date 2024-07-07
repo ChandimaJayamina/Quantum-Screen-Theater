@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "show.h"
 #include "welcomescreen.h" 
+#include "validations.h"
 
 /*
     This function is defined to handle Add theter show to file 
@@ -27,11 +28,19 @@ void addTheatreShow(void){
     /*
         Use to get date
     */ 
+   do{
     // Prompt the user for input
     printf("Enter show date by year-month-date eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", currentShow.date);
-    printf("You entered: %s\n", currentShow.date);
+    trimSpaces(currentShow.date);
+    if(isValidDate(currentShow.date) == 0) {
+        printf("%s is not a valid date.\n", currentShow.date);
+
+     }
+    } while (isValidDate(currentShow.date) == 0);
+
+      printf("You entered: %s\n", currentShow.date);
 
     /*
         Use to get time
@@ -105,10 +114,18 @@ void displayTheatreSchedule(void){
         Use to get date
     */ 
     char date[15];
+    do{
     // Prompt the user for input
     printf("Enter date by year-month-date eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", date);
+    trimSpaces(date);
+
+    if(isValidDate(date) == 0) {
+        printf("%s is not a valid date.\n", date);
+    }
+    } while (isValidDate(date) == 0);
+
     printf("You entered: %s\n", date); 
     // ------------------------------------- to do regex validate
 
