@@ -16,35 +16,28 @@ void addTheatreShow(void){
     Show currentShow;
     initializeShow(&currentShow);
 
-    /*
-        Use to get show name
-    */ 
+    // Get show name
     printf("Please enter the name of the show (max 49 characters): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", currentShow.name);
     trimSpaces(currentShow.name);
     printf("You entered: %s\n", currentShow.name);
 
-    /*
-        Use to get date
-    */ 
-   do{
-    // Prompt the user for input
-    printf("Enter show date by year-month-date eg:2024-06-20: ");
-    // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", currentShow.date);
-    trimSpaces(currentShow.date);
-    if(isValidDate(currentShow.date) == 0) {
-        printf("%s is not a valid date.\n", currentShow.date);
-
-     }
+    // Get date
+    do{
+        // Prompt the user for input
+        printf("Enter show date by year-month-date eg:2024-06-20: ");
+        // Use scanf to read the input string until newline is encountered
+        scanf(" %[^\n]", currentShow.date);
+        trimSpaces(currentShow.date);
+        if(isValidDate(currentShow.date) == 0) {
+            printf("%s is not a valid date.\n", currentShow.date);
+        }
     } while (isValidDate(currentShow.date) == 0);
 
-      printf("You entered: %s\n", currentShow.date);
+    printf("You entered: %s\n", currentShow.date);
 
-    /*
-        Use to get time
-    */ 
+    // Get time
     TimeSlot selectedSlot;
     // Display available time slots
     printf("Please select Time Slot:\n");
@@ -85,7 +78,7 @@ void addTheatreShow(void){
     /*
         Use to calculate revenue
     */
-   currentShow.revenue = 0;
+    currentShow.revenue = 0;
 
     /*  To do --------------------------------------------------------------------------------
     seat availableVIP[50];
@@ -94,11 +87,10 @@ void addTheatreShow(void){
     seat availableTwin[50];
     */
 
-    /*
-        Check is the time slot available by using regex pattern 
-    */
+    
+    //  Check is the time slot available by using regex pattern 
     if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
-        printf("Time slot not found");
+        printf("\n Show successfully added to schedule");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
         printf("Time slot found so not added the show to schedule");
@@ -110,9 +102,8 @@ void addTheatreShow(void){
     This function is defined to give theater details to user by date
 */
 void displayTheatreSchedule(void){
-    /*
-        Use to get date
-    */ 
+    
+    //  Use to get date 
     char date[15];
     do{
     // Prompt the user for input
@@ -127,7 +118,6 @@ void displayTheatreSchedule(void){
     } while (isValidDate(date) == 0);
 
     printf("You entered: %s\n", date); 
-    // ------------------------------------- to do regex validate
 
     // Printing the output from the file
     FILE *file = fopen("show_schedules.txt", "r+b");
@@ -136,12 +126,15 @@ void displayTheatreSchedule(void){
         exit(EXIT_FAILURE);
     }
     Show show;
-
+    int found = 0;
     while (fread(&show, sizeof(Show), 1, file)) {
-        printf("File found %s %s", show.date, show.time);
         if (strcmp(show.date, date) == 0) {
             printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
+            found = 1;
         }
+    }
+    if (!found) {
+        printf("No shows found for the specified date.\n");
     }
     fclose(file);
     goToMainPage();
@@ -285,9 +278,8 @@ void reserveSeat(void){
 */
 void displayTheatreReservation(void){
     char check[15];
-    /*
-        Use to get show id
-    */ 
+
+    // Get show ID
     printf("Please enter the id of the show (max 49 characters): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", check);
@@ -300,22 +292,21 @@ void displayTheatreReservation(void){
         perror("Failed to open file for reading");
         exit(EXIT_FAILURE);
     }
-    int flagFound = 1;
+    int showFound = 0;
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.id, check) == 0) {
             printf("Show found\n");
-            flagFound = 0;
+            showFound = 1;
             printHall(&show.hall);
+            break;
         }
     }
-    if(flagFound){
+    if(!showFound){
         printf("Show not found\n");
     }
     fclose(file);
     goToMainPage();
 }
-
-
 
 
 /*
@@ -458,7 +449,7 @@ void trimSpaces(char *str) {
 //Function to redirect main page
 void goToMainPage(void){ 
     char character;
-    printf("\nPlease select one option \n 1: main page press M \n 2: quit press Q \n:");
+    printf("\nPlease select one option \n M: To main page  \n Q: Exit  \n:");
     scanf(" %c", &character);  // Note the space before %c to consume any leftover newline
     switch (tolower(character)) {
         case 'm':
