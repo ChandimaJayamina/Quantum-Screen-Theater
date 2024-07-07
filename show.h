@@ -1,4 +1,4 @@
-#include <pcre.h>
+// #include <pcre.h>
 
 // Define the number of rows and columns
 #define ROWS 17
@@ -60,3 +60,7 @@ typedef enum {
 } TimeSlot;
 
 const char* timeSlotToString(TimeSlot slot);
+
+void trimSpaces(char *str);
+void goToMainPage(void);
+void toLowerString(char *str);
