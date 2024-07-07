@@ -4,78 +4,6 @@
 #include <ctype.h>
 #include "show.h"
 #include "welcomescreen.h" 
-#include "validations.h"
-
-// Creation of 2D array
-void initializeShow(Show *show) {
-    // Initialize first row with numbers
-    for (int j = 0; j < COLS; j++) {
-        if (j == 0) {
-            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "  ");
-        } else {
-            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "%02d", j);
-        }
-    }
-
-    // Initialize subsequent rows with letters and '*'
-    for (int i = 1; i < ROWS; i++) {
-        snprintf(show->hall.table[i][0].str, sizeof(show->hall.table[i][0].str), "%c ", 'A' + (i - 1));
-        for (int j = 1; j < COLS; j++) {
-            snprintf(show->hall.table[i][j].str, sizeof(show->hall.table[i][j].str), " *");
-        }
-    }
-}
-// Function to convert TimeSlot enum to string
-const char* timeSlotToString(TimeSlot slot) {
-    switch(slot) {
-        case SLOT_1: return "10:00 AM";
-        case SLOT_2: return "12:00 PM";
-        case SLOT_3: return "02:30 PM";
-        case SLOT_4: return "04:00 PM";
-        case SLOT_5: return "06:00 PM";
-        default: return "Unknown";
-    }
-}
-
-// Function to remove leading and trailing spaces
-void trimSpaces(char *str) {
-    char *end;
-
-    // Trim leading space
-    while (isspace((unsigned char)*str)) str++;
-
-    // All spaces?
-    if (*str == 0) {
-        str[0] = '\0';
-        return;
-    }
-
-    // Trim trailing space
-    end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end)) end--;
-
-    // Write new null terminator character
-    end[1] = '\0';
-}
-
-//Function to redirect main page
-void goToMainPage(void){ 
-    char character;
-    printf("\nPlease select one option \n 1: main page press M \n 2: quit press Q \n:");
-    scanf(" %c", &character);  // Note the space before %c to consume any leftover newline
-    switch (tolower(character)) {
-        case 'm':
-            printf("You will redirect to main page \n\n");
-            welcome();
-            break;
-        case 'q':
-            printf("Exit from application \n\n");
-            break;
-        default:
-            printf("You have selected wrong option redirect to main menu\n\n");
-            welcome();
-    }
-}
 
 /*
     This function is defined to handle Add theter show to file 
@@ -98,19 +26,10 @@ void addTheatreShow(void){
     /*
         Use to get date
     */ 
-   do{
-        // Prompt the user for input
+    // Prompt the user for input
     printf("Enter show date by year-month-date eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", currentShow.date);
-    trimSpaces(currentShow.date);
-    if(isValidDate(currentShow.date) == 0) {
-        printf("%s is not a valid date.\n", currentShow.date);
-    }
-   } while (isValidDate(currentShow.date));
-
-
-
     printf("You entered: %s\n", currentShow.date);
 
     /*
@@ -185,18 +104,10 @@ void displayTheatreSchedule(void){
         Use to get date
     */ 
     char date[15];
-       do{
-        // Prompt the user for input
-    printf("Enter show date by year-month-date eg:2024-06-20: ");
+    // Prompt the user for input
+    printf("Enter date by year-month-date eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", date);
-    trimSpaces(date);
-    if(isValidDate(date) == 0) {
-        printf("%s is not a valid date.\n", date);
-    }
-   } while (isValidDate(date));
-
-
     printf("You entered: %s\n", date); 
     // ------------------------------------- to do regex validate
 
@@ -283,13 +194,14 @@ void reserveSeat(void){
         Use to get seat action
     */ 
     char action[5];
+    toLowerString(action);
     printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", action);
     printf("You entered: %s\n", action); 
     if ( strcmp(action, "#") == 0 ) {
         printf("Action is: reserve with pay\n");
-    } else if (strcmp(tolower(action), "o") == 0 ){
+    } else if (strcmp(action, "o") == 0 ){
         printf("Action is: reserve without pay\n");
     }else{
         printf("Cancel the reservation");
@@ -464,4 +376,94 @@ void parseSeat(char *seat, int *row, int *col) {
     *row = seat[0] - 'A' + 1;
     // Convert the remaining part of the seat string to an integer for the column
     *col = atoi(seat + 1);
+}
+
+// This is used to lower the string inputs
+void toLowerString(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char) str[i]);
+    }
+}
+
+// Creation of 2D array
+void initializeShow(Show *show) {
+    // Initialize first row with numbers
+    for (int j = 0; j < COLS; j++) {
+        if (j == 0) {
+            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "  ");
+        } else {
+            snprintf(show->hall.table[0][j].str, sizeof(show->hall.table[0][j].str), "%02d", j);
+        }
+    }
+
+    // Initialize subsequent rows with letters and '*'
+    for (int i = 1; i < ROWS; i++) {
+        snprintf(show->hall.table[i][0].str, sizeof(show->hall.table[i][0].str), "%c ", 'A' + (i - 1));
+        for (int j = 1; j < COLS; j++) {
+            snprintf(show->hall.table[i][j].str, sizeof(show->hall.table[i][j].str), " *");
+        }
+    }
+}
+// Function to convert TimeSlot enum to string
+const char* timeSlotToString(TimeSlot slot) {
+    switch(slot) {
+        case SLOT_1: return "10:00 AM";
+        case SLOT_2: return "12:00 PM";
+        case SLOT_3: return "02:30 PM";
+        case SLOT_4: return "04:00 PM";
+        case SLOT_5: return "06:00 PM";
+        default: return "Unknown";
+    }
+}
+
+// Function to remove leading and trailing spaces
+void trimSpaces(char *str) {
+    char *end;
+
+    // Trim leading space
+    while (isspace((unsigned char)*str)) str++;
+
+    // All spaces?
+    if (*str == 0) {
+        str[0] = '\0';
+        return;
+    }
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) end--;
+
+    // Write new null terminator character
+    end[1] = '\0';
+}
+
+//Function to redirect main page
+void goToMainPage(void){ 
+    char character;
+    printf("\nPlease select one option \n 1: main page press M \n 2: quit press Q \n:");
+    scanf(" %c", &character);  // Note the space before %c to consume any leftover newline
+    switch (tolower(character)) {
+        case 'm':
+            printf("You will redirect to main page \n\n");
+            welcome();
+            break;
+        case 'q':
+            printf("Exit from application \n\n");
+            break;
+        default:
+            printf("You have selected wrong option redirect to main menu\n\n");
+            restart_program();
+    }
+}
+
+void restart_program() {
+    // Get the current program name and arguments
+    char *argv[] = { "./app", NULL };
+    
+    // Replace the current process with a new instance of the same program
+    execvp(argv[0], argv);
+    
+    // If execvp returns, it must have failed
+    perror("execvp");
+    exit(EXIT_FAILURE);
 }
