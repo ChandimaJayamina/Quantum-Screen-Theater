@@ -295,25 +295,26 @@ void reserveSeat(void){
         Use to get seat action
     */ 
     char action[5];
-    toLowerString(action);
     printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", action);
+    toLowerString(action);
     printf("You entered: %s\n", action); 
     if ( strcmp(action, "#") == 0 ) {
         printf("Action is: reserve with pay\n");
-    } else if (strcmp(action, "o") == 0 ){
+    } else if (strcmp(action, "o") == 0 || strcmp(action, "0") == 0){
+        strcpy(action, "o");
         printf("Action is: reserve without pay\n");
+    }else if (strcmp(action, "x") == 0 ){
+        printf("Action is: cancel the reservations\n");
     }else{
-        printf("Cancel the reservation");
+        printf("Character didnt recognized");
         goToMainPage();
     }
     // Move existing characters to make space for an additional character
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
-
-
                                        
     
     
@@ -321,16 +322,15 @@ void reserveSeat(void){
     //Change seat
     if (index != -1) {
         printf("Before for loop\n");
-        int i = 0;
         for (int i = 0; i < token_count; ++i) {
             int r = row[i];
             int c = col[i];
             strcpy(show.hall.table[r][c].str, action);
+            
         }
-        printf("Before for loop\n");
+        for()
         // Seek to the position of the struct to modify
         fseek(file, index, SEEK_SET);
-        printf("Before for loop\n");
         // Write the modified struct back to the file
         if (fwrite(&show, sizeof(Show), 1, file) != 1) {
             perror("Error writing to file");
@@ -590,7 +590,7 @@ void displayTheatreScheduleForDate(const char *date){
 
 void initializeSeats(Seat seats[], size_t size) {
     for (size_t i = 0; i < size; i++) {
-        strcpy(seats[i].str, ""); // or memset(seats[i].str, 0, sizeof(seats[i].str));
+        strcpy(seats[i].str, ""); 
     }
 }
 /*
@@ -637,6 +637,9 @@ int printAvailableSeats(Show *show, char *seatCategory){
     if(strcmp(seatCategory, "twin") == 0){
         printf("Available Twin seats:\n");
         for (int i = 0; i < 22; i++) {
+            if(strcmp(show->availableTwin[i].str, "") == 0){
+                continue;
+            }
             printf("%s ", show->availableTwin[i].str);
         }
         printf("\n");
@@ -645,6 +648,9 @@ int printAvailableSeats(Show *show, char *seatCategory){
     else if(strcmp(seatCategory, "vvip") == 0){
         printf("Available VVIP seats:\n");
         for (int i = 0; i < 98; i++) {
+            if(strcmp(show->availableVVIP[i].str, "") == 0){
+                continue;
+            }
             printf("%s ", show->availableVVIP[i].str);
         }
         printf("\n");
@@ -653,6 +659,9 @@ int printAvailableSeats(Show *show, char *seatCategory){
     else if(strcmp(seatCategory, "vip") == 0){
         printf("Available VIP seats:\n");
         for (int i = 0; i < 120; i++) {
+            if(strcmp(show->availableVIP[i].str, "") == 0){
+                continue;
+            }
             printf("%s ", show->availableVIP[i].str);
         }
         printf("\n");
@@ -661,6 +670,9 @@ int printAvailableSeats(Show *show, char *seatCategory){
     else if(strcmp(seatCategory, "economy") == 0){
         printf("Available Economy seats:\n");
         for (int i = 0; i < 80; i++) {
+            if(strcmp(show->availableEconomy[i].str, "") == 0){
+                continue;
+            }
             printf("%s ", show->availableEconomy[i].str);
         }
         printf("\n");
