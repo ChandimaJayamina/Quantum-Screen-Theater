@@ -218,6 +218,9 @@ void reserveSeat(void){
     int rowCounter;
     int userSeatConfirmation = 0; //use to get confirmation of seats reservation before write those to file
     int userChoice;
+    char twinrow;
+    int twincol;
+    char nextSeat[5];
     do{
         
         printf("Please enter the seats need to reserve by comma seperate (C5, E5): ");
@@ -240,9 +243,22 @@ void reserveSeat(void){
             seatValidation = seatsAvailabiltyCheck(token, &show, seatCategory);
             // Store the token in the tokens array
             if(seatValidation){
-                parseSeat(token, &row[token_count], &col[token_count]);
-                printf("Token :%s added for que \n", token);
-                tokens[token_count++] = token;
+                if (strcmp(seatCategory, "twin") == 0){
+                    parseSeat(token, &row[token_count], &col[token_count]);
+                    tokens[token_count++] = strdup(token);
+                    // Parse the current seat into row and number
+                    sscanf(token, "%c%d", &twinrow, &twincol);
+                    twincol++;
+                    // Format the next seat string
+                    snprintf(nextSeat, 5, "%c%d", twinrow, twincol);
+                    parseSeat(nextSeat, &row[token_count], &col[token_count]);
+                    tokens[token_count++] = strdup(nextSeat);
+                }
+                else{
+                    parseSeat(token, &row[token_count], &col[token_count]);
+                    printf("Token :%s added for que \n", token);
+                    tokens[token_count++] = token;
+                }
             } 
             // Get next token
             token = strtok(NULL, ",");
@@ -269,6 +285,9 @@ void reserveSeat(void){
             goToMainPage();
         }else{
             userSeatConfirmation = 0;
+            for (int i = 0; i < token_count; i++) {
+                free(tokens[i]); // Free the allocated memory for each token
+            }
         }
     }while(!userSeatConfirmation);
 
@@ -320,6 +339,11 @@ void reserveSeat(void){
         }
     }
     fclose(file);
+    if (strcmp(seatCategory, "twin") == 0){
+        for (int i = 0; i < token_count; i++) {
+            free(tokens[i]); // Free the allocated memory for each token
+        }
+    }
     goToMainPage();
 }
 
