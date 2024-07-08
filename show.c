@@ -315,8 +315,14 @@ void reserveSeat(void){
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
-                                       
-    
+
+    // To do -------------------------------------------------------------------------------------------------------
+    /*
+        need to change the revenue according to action 
+        write seats to file and remove from the array (twin seats need only to remove first one escape next eg: A4,A5)
+        cancel reservation means as i think if it reserved previous now need to cance it so action sould be * not x and need to reduce amount from revenue
+        I think it makes complex function so lets just go to main menu if need we can give another function to main page cancel reservation
+    */
     
     printf("Index %ld\n", index);
     //Change seat
