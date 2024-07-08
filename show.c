@@ -26,7 +26,7 @@ void addTheatreShow(void){
     // Get date
     do{
         // Prompt the user for input
-        printf("Enter show date by year-month-date eg:2024-06-20: ");
+        printf("Enter date in format YYYY-MM-DD eg:2024-06-20: ");
         // Use scanf to read the input string until newline is encountered
         scanf(" %[^\n]", currentShow.date);
         trimSpaces(currentShow.date);
@@ -90,20 +90,16 @@ void addTheatreShow(void){
     //  Use to calculate revenue
     currentShow.revenue = 0;
 
-    /*  To do --------------------------------------------------------------------------------
-    seat availableVIP[50];
-    seat availableVVIP[50];
-    seat availableEconomy[50];
-    seat availableTwin[50];
-    */
-
+    // To do --------------------------------------------------------------------------------
+    populateSeats(&currentShow);
+    printf("Twin seat : %s", currentShow.availableTwin[0].str);
     
     //  Check is the time slot available by using regex pattern 
     if(checkForFileWrite){
         printf("\n Show successfully added to schedule");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
-        printf("Error occurs when adding the show");
+        printf("\n Error occurs when adding the show");
     }
     goToMainPage();
 }
@@ -112,12 +108,12 @@ void addTheatreShow(void){
     This function is defined to give theater details to user by date
 */
 void displayTheatreSchedule(void){
-    
+    printf("----- Display Theatre Schedule ----- \n");
     //  Use to get date 
     char date[15];
     do{
     // Prompt the user for input
-    printf("Enter date by year-month-date eg:2024-06-20: ");
+    printf("Enter date in format YYYY-MM-DD eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", date);
     trimSpaces(date);
@@ -325,11 +321,11 @@ void displayTheatreReservation(void){
 int checkTimeSlot(const char *filename, const char *date, const char *time){
     FILE *file = fopen(filename, "r+b");
     if (file == NULL) {
-        perror("Failed to open file for reading");
+        perror("Failed to open file for reading\n");
         exit(EXIT_FAILURE);
     }
     Show show;
-    printf("Checking %s %s", date,time);
+    printf("Checking %s %s\n", date,time);
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.date, date) == 0 && strcmp(show.time, time) == 0) {
             return 0;
@@ -356,8 +352,8 @@ void writeShowToFile(const char *filename, Show *show) {
     This function is used by Display theter reservation by given show id
 */
 void printHall(Theaterhall *hall) {
-    for (int i = 0; i < 17; i++) {
-        for (int j = 0; j < 17; j++) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
             printf("%s ", hall->table[i][j].str);
         }
         printf("\n");
@@ -508,4 +504,44 @@ void displayTheatreScheduleForDate(const char *date){
         printf("No shows found for the specified date.\n");
     }
     fclose(file);
+}
+
+
+
+
+
+void populateSeats(Show *show) {
+    int vipCount = 0, vvipCount = 0, economyCount = 0, twinCount = 0;
+    for (int row = 1; row < ROWS; row++) {
+        for (int col = 1; col < COLS; col++) {
+            char seat[5];
+            formatSeat(row, col, seat);
+            if ((row == 1 || row == 2) && col >= 4 && col <= 14) {
+                // Twin seats
+                strcpy(show->availableTwin[twinCount++].str, seat);
+                col++;
+            } else if (row <= 6) {
+                // VVIP seats
+                strcpy(show->availableVVIP[vvipCount++].str, seat);
+            } else if (row <= 12) {
+                // VIP seats
+                strcpy(show->availableVIP[vipCount++].str, seat);
+            } else {
+                // Economy seats
+                strcpy(show->availableEconomy[economyCount++].str, seat);
+            }
+        }
+    }
+}
+
+/*
+    This function is used for initialization of show
+    to convert row and column integers to the seat string
+*/
+
+void formatSeat(int row, int col, char *seat) {
+    // Convert the row number to a letter (1 -> A, 2 -> B, ...)
+    char rowLetter = 'A' + (row - 1);
+    // Format the seat string
+    snprintf(seat, 5, "%c%d", rowLetter, col);
 }
