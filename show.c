@@ -11,7 +11,7 @@
     This function is defined to handle Add theter show to file 
 */
 void addTheatreShow(void){
-    printf("Came to addTheatreShow method\n");
+    printf("----- Add Theatre Show ----- \n");
 
     Show currentShow;
     initializeShow(&currentShow);
@@ -26,7 +26,7 @@ void addTheatreShow(void){
     // Get date
     do{
         // Prompt the user for input
-        printf("Enter show date by year-month-date eg:2024-06-20: ");
+        printf("Enter date in format YYYY-MM-DD eg:2024-06-20: ");
         // Use scanf to read the input string until newline is encountered
         scanf(" %[^\n]", currentShow.date);
         trimSpaces(currentShow.date);
@@ -46,54 +46,60 @@ void addTheatreShow(void){
     printf("3. %s\n", timeSlotToString(SLOT_3));
     printf("4. %s\n", timeSlotToString(SLOT_4));
     printf("5. %s\n", timeSlotToString(SLOT_5));
+    printf("6. Go to main menu \n");
     // Prompt user to select a time slot
-    printf("Select a time slot (1-5): ");
     int choice;
-    scanf("%d", &choice);
-    // Validate user input
-    switch(choice) {
-        case 1: selectedSlot = SLOT_1; break;
-        case 2: selectedSlot = SLOT_2; break;
-        case 3: selectedSlot = SLOT_3; break;
-        case 4: selectedSlot = SLOT_4; break;
-        case 5: selectedSlot = SLOT_5; break;
-        default:
-            printf("Invalid selection. goes with slot1");
-            selectedSlot = SLOT_1;
-    }
+    int checkForFileWrite = 0;
+    do{
+        int validSelection = 0;
+        do{
+            printf("Select a time slot (1-5): ");
+            scanf("%d", &choice);
+            // Validate user input
+            switch(choice) {
+                case 1: selectedSlot = SLOT_1; validSelection=1; break;
+                case 2: selectedSlot = SLOT_2; validSelection=1; break;
+                case 3: selectedSlot = SLOT_3; validSelection=1; break;
+                case 4: selectedSlot = SLOT_4; validSelection=1; break;
+                case 5: selectedSlot = SLOT_5; validSelection=1; break;
+                case 6: goToMainPage(); break;
+                default:
+                    printf("Invalid selection Try again \n ");
+            } 
+        } while(!validSelection) ;    
+        // Display selected time slot
+        sprintf(currentShow.time, "%s", timeSlotToString(selectedSlot));
+        printf("You selected: %s\n", currentShow.time);
+       
+        //  Check is the time slot available by using regex pattern 
+        if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
+            checkForFileWrite=1;
+        }else{
+            printf("\nThere is a show for given Time slot, please check another time slot here are the shows for given date \n");
+            displayTheatreScheduleForDate(currentShow.date);
+        }
+    }while(!checkForFileWrite);
 
-    // Display selected time slot
-    sprintf(currentShow.time, "%s",
-            timeSlotToString(selectedSlot));
-    printf("You selected: %s\n", currentShow.time);
     
-    /*
-        Use to get show id
-    */ 
+    //  Use to get show id
     sprintf(currentShow.id, "[%s_%s_%s]",
             currentShow.name,
             currentShow.date, currentShow.time);
     printf("ID : %s\n", currentShow.id);
     
-    /*
-        Use to calculate revenue
-    */
+    //  Use to calculate revenue
     currentShow.revenue = 0;
 
-    /*  To do --------------------------------------------------------------------------------
-    seat availableVIP[50];
-    seat availableVVIP[50];
-    seat availableEconomy[50];
-    seat availableTwin[50];
-    */
-
+    // To do --------------------------------------------------------------------------------
+    populateSeats(&currentShow);
+    printf("Twin seat : %s", currentShow.availableTwin[0].str);
     
     //  Check is the time slot available by using regex pattern 
-    if(checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time)){
+    if(checkForFileWrite){
         printf("\n Show successfully added to schedule");
         writeShowToFile("show_schedules.txt", &currentShow);
     }else{
-        printf("Time slot found so not added the show to schedule");
+        printf("\n Error occurs when adding the show");
     }
     goToMainPage();
 }
@@ -102,12 +108,12 @@ void addTheatreShow(void){
     This function is defined to give theater details to user by date
 */
 void displayTheatreSchedule(void){
-    
+    printf("----- Display Theatre Schedule ----- \n");
     //  Use to get date 
     char date[15];
     do{
     // Prompt the user for input
-    printf("Enter date by year-month-date eg:2024-06-20: ");
+    printf("Enter date in format YYYY-MM-DD eg:2024-06-20: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", date);
     trimSpaces(date);
@@ -315,11 +321,11 @@ void displayTheatreReservation(void){
 int checkTimeSlot(const char *filename, const char *date, const char *time){
     FILE *file = fopen(filename, "r+b");
     if (file == NULL) {
-        perror("Failed to open file for reading");
+        perror("Failed to open file for reading\n");
         exit(EXIT_FAILURE);
     }
     Show show;
-    printf("Checking %s %s", date,time);
+    printf("Checking %s %s\n", date,time);
     while (fread(&show, sizeof(Show), 1, file)) {
         if (strcmp(show.date, date) == 0 && strcmp(show.time, time) == 0) {
             return 0;
@@ -346,8 +352,8 @@ void writeShowToFile(const char *filename, Show *show) {
     This function is used by Display theter reservation by given show id
 */
 void printHall(Theaterhall *hall) {
-    for (int i = 0; i < 17; i++) {
-        for (int j = 0; j < 17; j++) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
             printf("%s ", hall->table[i][j].str);
         }
         printf("\n");
@@ -475,4 +481,67 @@ void restart_program() {
     // If execvp returns, it must have failed
     perror("execvp");
     exit(EXIT_FAILURE);
+}
+
+void displayTheatreScheduleForDate(const char *date){
+    printf("Check the Shows for Date : %s\n", date); 
+
+    // Printing the output from the file
+    FILE *file = fopen("show_schedules.txt", "r+b");
+    if (file == NULL) {
+        perror("Failed to open file for reading");
+        exit(EXIT_FAILURE);
+    }
+    Show show;
+    int found = 0;
+    while (fread(&show, sizeof(Show), 1, file)) {
+        if (strcmp(show.date, date) == 0) {
+            printf("\nShow : %s | Show ID : %s| Date : %s | Time : %s | Revenue : %d \n", show.name, show.id, show.date, show.time, show.revenue);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No shows found for the specified date.\n");
+    }
+    fclose(file);
+}
+
+
+
+
+
+void populateSeats(Show *show) {
+    int vipCount = 0, vvipCount = 0, economyCount = 0, twinCount = 0;
+    for (int row = 1; row < ROWS; row++) {
+        for (int col = 1; col < COLS; col++) {
+            char seat[5];
+            formatSeat(row, col, seat);
+            if ((row == 1 || row == 2) && col >= 4 && col <= 14) {
+                // Twin seats
+                strcpy(show->availableTwin[twinCount++].str, seat);
+                col++;
+            } else if (row <= 6) {
+                // VVIP seats
+                strcpy(show->availableVVIP[vvipCount++].str, seat);
+            } else if (row <= 12) {
+                // VIP seats
+                strcpy(show->availableVIP[vipCount++].str, seat);
+            } else {
+                // Economy seats
+                strcpy(show->availableEconomy[economyCount++].str, seat);
+            }
+        }
+    }
+}
+
+/*
+    This function is used for initialization of show
+    to convert row and column integers to the seat string
+*/
+
+void formatSeat(int row, int col, char *seat) {
+    // Convert the row number to a letter (1 -> A, 2 -> B, ...)
+    char rowLetter = 'A' + (row - 1);
+    // Format the seat string
+    snprintf(seat, 5, "%c%d", rowLetter, col);
 }
