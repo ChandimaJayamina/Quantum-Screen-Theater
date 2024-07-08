@@ -66,10 +66,11 @@ void goToMainPage(void);
 void restart_program(void);
 void displayTheatreScheduleForDate(const char *date);
 
-
+int seatsAvailabiltyCheck(char *seat, Show *show, char *seatCategory);
+void initializeSeats(Seat seats[], size_t size);
 void formatSeat(int row, int col, char *seat);
 FILE* getFile(char *action);
 void findAvailableSeats(Theaterhall *hall);
 void populateSeats(Show *show);
-void printAvailableSeats(Show *show, char *seatCategory);
+int printAvailableSeats(Show *show, char *seatCategory);
 //Show updateAvailableSeatsAndRevenue(char *seat, Show *show, char *seatCategory);
