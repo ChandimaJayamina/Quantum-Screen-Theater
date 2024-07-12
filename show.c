@@ -312,6 +312,7 @@ void reserveSeat(void){
         printf("Action is: reserve without pay\n");
     } else if (strcmp(action, "x") == 0 ){
         printf("Action is: cancel the reservations\n");
+        goToMainPage();
     } else {
         printf("Character didn't recognized");
         goToMainPage();
