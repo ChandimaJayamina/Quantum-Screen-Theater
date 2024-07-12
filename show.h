@@ -72,3 +72,4 @@ void formatSeat(int row, int col, char *seat);
 void findAvailableSeats(Theaterhall *hall);
 void populateSeats(Show *show);
 int printAvailableSeats(Show *show, char *seatCategory);
+void removeSeatFromArray(Seat* array, int size, char* seat);
