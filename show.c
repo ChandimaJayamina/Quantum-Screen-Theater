@@ -155,9 +155,9 @@ void displayTheatreSchedule(void){
 */
 void reserveSeat(void){
     
-    //  Use to get show id
+    // Use to get show id
     char showId[15];
-    printf("Please enter the show ID : ");
+    printf("Please enter the show ID: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", showId);
     trimSpaces(showId);
@@ -178,32 +178,30 @@ void reserveSeat(void){
         }
     }
     printf("show date %s\n", show.date);
-    printf("A1 seat : %s", show.hall.table[1][1].str);
+    printf("A1 seat: %s\n", show.hall.table[1][1].str);
 
-    
-    //  Use to get seat category 
+    // Use to get seat category 
     char seatCategory[15];
     printf("You entered: %s\n", seatCategory);
     int validSelection = 0;
     do{
-        printf("Please enter the Desired seat category (VVIP, VIP, Twin, Economy) : ");
+        printf("Please enter the desired seat category (VVIP, VIP, Twin, Economy): ");
         scanf(" %[^\n]", seatCategory);
         trimSpaces(seatCategory);
         toLowerString(seatCategory);
         // Validate user input
         validSelection = printAvailableSeats(&show, seatCategory);
-    } while(!validSelection) ;
+    } while(!validSelection);
     printf("You entered: %s\n", seatCategory);
 
     /*
-        Use to get number of seatsss
+        Use to get number of seats
     */ 
     int numberofSeats;
-    printf("Please enter the  number of seats required: ");
+    printf("Please enter the number of seats required: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %d", &numberofSeats);
-    printf("You entered: %d\n", numberofSeats); 
-
+    printf("You entered: %d\n", numberofSeats);
 
     /*
         Use to get seats and validate those seats
@@ -216,18 +214,17 @@ void reserveSeat(void){
     char *tokens[MAX_TOKENS]; // Array to hold tokens
     int row[MAX_TOKENS], col[MAX_TOKENS]; // Add rows and cols to change
     int rowCounter;
-    int userSeatConfirmation = 0; //use to get confirmation of seats reservation before write those to file
+    int userSeatConfirmation = 0; // Use to get confirmation of seats reservation before writing those to file
     int userChoice;
     char twinrow;
     int twincol;
     char nextSeat[5];
     do{
-        
-        printf("Please enter the seats need to reserve by comma seperate (C5, E5): ");
+        printf("Please enter the seats need to reserve by comma separate (C5, E5): ");
         // Use scanf to read the input string until newline is encountered
         scanf(" %[^\n]", checkseats);
         printf("You entered: %s\n", checkseats); 
-        printf("Check for the seats availability for reservation .............. \n");
+        printf("Check for the seats availability for reservation ..............\n");
         token_count = 0;
 
         rowCounter = 0;
@@ -239,7 +236,7 @@ void reserveSeat(void){
         // Get the first token
         token = strtok(checkseats, ",");
         while (token != NULL && token_count < MAX_TOKENS) {
-            //check  seat availability in array
+            // Check seat availability in array
             seatValidation = seatsAvailabiltyCheck(token, &show, seatCategory);
             // Store the token in the tokens array
             if(seatValidation){
@@ -253,10 +250,9 @@ void reserveSeat(void){
                     snprintf(nextSeat, 5, "%c%d", twinrow, twincol);
                     parseSeat(nextSeat, &row[token_count], &col[token_count]);
                     tokens[token_count++] = strdup(nextSeat);
-                }
-                else{
+                } else {
                     parseSeat(token, &row[token_count], &col[token_count]);
-                    printf("Token :%s added for que \n", token);
+                    printf("Token: %s added for que\n", token);
                     tokens[token_count++] = token;
                 }
             } 
@@ -268,12 +264,12 @@ void reserveSeat(void){
             for(int i = 0; i<token_count; i++){
                 printf("%s, ", tokens[i]);
             }
-            printf("\n1 : Confirm seats for reserve \n");
-            printf("2 : Try again choose seats \n");
-        }else{
-            printf("\nThere is no seats available from given seats");
-            printf("2 : Try again choose seats \n");
-            printf("3 : exit to main page \n");
+            printf("\n1: Confirm seats for reserve\n");
+            printf("2: Try again choose seats\n");
+        } else {
+            printf("\nThere are no seats available from given seats");
+            printf("2: Try again choose seats\n");
+            printf("3: exit to main page\n");
         }
         printf("\n");
         userChoice = 0;
@@ -281,60 +277,59 @@ void reserveSeat(void){
         printf("You entered: %d\n", userChoice); 
         if(userChoice == 1 && token_count>0){
             userSeatConfirmation = 1;
-        }else if(userChoice == 3){
+        } else if(userChoice == 3){
             goToMainPage();
-        }else{
+        } else {
             userSeatConfirmation = 0;
             for (int i = 0; i < token_count; i++) {
                 free(tokens[i]); // Free the allocated memory for each token
             }
         }
-    }while(!userSeatConfirmation);
+    } while(!userSeatConfirmation);
 
-     /*
+    /*
         Use to get seat action
     */ 
     char action[5];
-    printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x : cancel reservation ): ");
+    printf("Please enter the action need to add (#: reserve with pay, o: reserve without pay, x: cancel reservation): ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %[^\n]", action);
     toLowerString(action);
     printf("You entered: %s\n", action); 
     if ( strcmp(action, "#") == 0 ) {
         printf("Action is: reserve with pay\n");
+        if (strcmp(seatCategory, "vvip") == 0) {
+            show.revenue += numberofSeats * 5000;
+        } else if (strcmp(seatCategory, "vip") == 0) {
+            show.revenue += numberofSeats * 2000;
+        } else if (strcmp(seatCategory, "twin") == 0) {
+            show.revenue += (numberofSeats / 2) * 1000; // Each twin seat counts as one pair
+        } else if (strcmp(seatCategory, "economy") == 0) {
+            show.revenue += numberofSeats * 500;
+        }
     } else if (strcmp(action, "o") == 0 || strcmp(action, "0") == 0){
         strcpy(action, "o");
         printf("Action is: reserve without pay\n");
-    }else if (strcmp(action, "x") == 0 ){
+    } else if (strcmp(action, "x") == 0 ){
         printf("Action is: cancel the reservations\n");
-    }else{
-        printf("Character didnt recognized");
+    } else {
+        printf("Character didn't recognized");
         goToMainPage();
     }
     // Move existing characters to make space for an additional character
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
-
-    // To do -------------------------------------------------------------------------------------------------------
-    /*
-        need to change the revenue according to action 
-        write seats to file and remove from the array (twin seats need only to remove first one escape next eg: A4,A5)
-        cancel reservation means as i think if it reserved previous now need to cance it so action sould be * not x and need to reduce amount from revenue
-        I think it makes complex function so lets just go to main menu if need we can give another function to main page cancel reservation
-    */
     
     printf("Index %ld\n", index);
-    //Change seat
+    // Change seat
     if (index != -1) {
         printf("Before for loop\n");
         for (int i = 0; i < token_count; ++i) {
             int r = row[i];
             int c = col[i];
             strcpy(show.hall.table[r][c].str, action);
-            
         }
-        for()
         // Seek to the position of the struct to modify
         fseek(file, index, SEEK_SET);
         // Write the modified struct back to the file
@@ -555,8 +550,8 @@ void restart_program() {
     char *argv[] = { "./app", NULL };
     
     // Replace the current process with a new instance of the same program
-    execvp(argv[0], argv);
-    
+    execvp(argv[0], (const char * const *)argv);
+
     // If execvp returns, it must have failed
     perror("execvp");
     exit(EXIT_FAILURE);
@@ -586,12 +581,6 @@ void displayTheatreScheduleForDate(const char *date){
     }
     fclose(file);
 }
-
-
-
-
-
-
 
 
 void initializeSeats(Seat seats[], size_t size) {
