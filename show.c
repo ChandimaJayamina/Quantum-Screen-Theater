@@ -229,9 +229,9 @@ void reserveSeat(void){
 
         rowCounter = 0;
         while (rowCounter < MAX_TOKENS) { // Stop the loop if a 0 is encountered
-                row[rowCounter] = 0;
-                col[rowCounter] = 0;
-                rowCounter++;
+            row[rowCounter] = 0;
+            col[rowCounter] = 0;
+            rowCounter++;
         }
         // Get the first token
         token = strtok(checkseats, ",");
@@ -320,7 +320,7 @@ void reserveSeat(void){
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
-    
+
     printf("Index %ld\n", index);
     // Change seat
     if (index != -1) {
@@ -329,6 +329,19 @@ void reserveSeat(void){
             int r = row[i];
             int c = col[i];
             strcpy(show.hall.table[r][c].str, action);
+        }
+        // Remove seats from available seats array
+        for (int i = 0; i < token_count; ++i) {
+            if (strcmp(seatCategory, "vvip") == 0) {
+                removeSeatFromArray(show.availableVVIP, 98, tokens[i]);
+            } else if (strcmp(seatCategory, "vip") == 0) {
+                removeSeatFromArray(show.availableVIP, 120, tokens[i]);
+            } else if (strcmp(seatCategory, "twin") == 0) {
+                removeSeatFromArray(show.availableTwin, 22, tokens[i]);
+                i++; // Skip the next seat in the pair
+            } else if (strcmp(seatCategory, "economy") == 0) {
+                removeSeatFromArray(show.availableEconomy, 80, tokens[i]);
+            }
         }
         // Seek to the position of the struct to modify
         fseek(file, index, SEEK_SET);
@@ -346,6 +359,18 @@ void reserveSeat(void){
         }
     }
     goToMainPage();
+}
+
+void removeSeatFromArray(Seat* array, int size, char* seat) {
+    for (int i = 0; i < size; i++) {
+        if (strcmp(array[i].str, seat) == 0) {
+            for (int j = i; j < size - 1; j++) {
+                strcpy(array[j].str, array[j + 1].str);
+            }
+            strcpy(array[size - 1].str, ""); // Clear the last element
+            break;
+        }
+    }
 }
 
 /*
