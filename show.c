@@ -299,13 +299,13 @@ void reserveSeat(void){
     if ( strcmp(action, "#") == 0 ) {
         printf("Action is: reserve with pay\n");
         if (strcmp(seatCategory, "vvip") == 0) {
-            show.revenue += numberofSeats * 5000;
+            show.revenue += token_count * 5000;
         } else if (strcmp(seatCategory, "vip") == 0) {
-            show.revenue += numberofSeats * 2000;
+            show.revenue += token_count * 2000;
         } else if (strcmp(seatCategory, "twin") == 0) {
-            show.revenue += (numberofSeats / 2) * 1000; // Each twin seat counts as one pair
+            show.revenue += token_count * 1000;
         } else if (strcmp(seatCategory, "economy") == 0) {
-            show.revenue += numberofSeats * 500;
+            show.revenue += token_count * 500;
         }
     } else if (strcmp(action, "o") == 0 || strcmp(action, "0") == 0){
         strcpy(action, "o");
@@ -575,7 +575,7 @@ void restart_program() {
     char *argv[] = { "./app", NULL };
     
     // Replace the current process with a new instance of the same program
-    execvp(argv[0], (const char * const *)argv);
+    execvp(argv[0], argv);
 
     // If execvp returns, it must have failed
     perror("execvp");
