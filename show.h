@@ -30,23 +30,6 @@ typedef struct
 
 } Show;
 
-
-// Add show to file
-void addTheatreShow(void);
-int checkTimeSlot(const char *filename, const char *date, const char *time);
-void writeShowToFile(const char *filename, Show *show);
-void initializeShow(Show *show);
-
-void displayTheatreSchedule(void);
-
-void displayTheatreReservation(void);
-void printHall(Theaterhall *hall);
-
-void reserveSeat(void);
-int charToNumber(char c);
-void removeWhiteSpacesandCapitalize(char *str);
-void parseSeat(char *seat, int *row, int *col);
-
 // Define an enumeration for time slots
 typedef enum
 {
@@ -57,19 +40,55 @@ typedef enum
     SLOT_5  // 06:00 PM
 } TimeSlot;
 
-const char *timeSlotToString(TimeSlot slot);
+
+
+void addTheatreShow(void);
+
+void displayTheatreSchedule(void);
+
+void displayTheatreReservation(void);
+
+void reserveSeat(void);
+
+void removeSeatFromAvailableSeats(Seat *array, int size, char *seat);
+
+int checkTimeSlot(const char *filename, const char *date, const char *time);
+
+void writeShowToFile(const char *filename, Show *show);
+
+void printHall(Theaterhall *hall);
+
+int charToNumber(char c);
+
+void removeWhiteSpacesandCapitalize(char *str);
+
+void parseSeat(char *seat, int *row, int *col);
+
 void toLowerString(char *str);
+
 void initializeShow(Show *show);
+
 const char *timeSlotToString(TimeSlot slot);
+
 void trimSpaces(char *str);
+
 void goToMainPage(void);
+
 void restart_program(void);
+
 void displayTheatreScheduleForDate(const char *date);
 
-int seatsAvailabiltyCheck(char *seat, Show *show, char *seatCategory);
 void initializeSeats(Seat seats[], size_t size);
-void formatSeat(int row, int col, char *seat);
-void findAvailableSeats(Theaterhall *hall);
+
 void populateSeats(Show *show);
+
+void formatSeat(int row, int col, char *seat);
+
 int printAvailableSeats(Show *show, char *seatCategory);
-void removeSeatFromAvailableSeats(Seat *array, int size, char *seat);
+
+int seatsAvailabiltyCheck(char *seat, Show *show, char *seatCategory);
+
+
+
+
+
