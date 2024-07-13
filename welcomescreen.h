@@ -6,3 +6,5 @@
 void welcome(void);
 
 void toLowerString(char *str);
+
+void toUpperString(char *str);
