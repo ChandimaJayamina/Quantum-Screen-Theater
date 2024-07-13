@@ -7,6 +7,7 @@
 #include "welcomescreen.h"
 #include "validations.h"
 
+
 const char *SeatTypeStrings[] = {
     "TWIN",
     "VVIP",
@@ -59,10 +60,10 @@ void addTheatreShow(void)
     printf("6. Go to main menu \n");
     // Prompt user to select a time slot
     int choice;
-    int checkForFileWrite = 0;
+    bool checkForFileWrite = false;
     do
     {
-        int validSelection = 0;
+        bool validSelection = false;
         do
         {
             printf("Select a time slot (1-5): ");
@@ -72,23 +73,23 @@ void addTheatreShow(void)
             {
             case 1:
                 selectedSlot = SLOT_1;
-                validSelection = 1;
+                validSelection = true;
                 break;
             case 2:
                 selectedSlot = SLOT_2;
-                validSelection = 1;
+                validSelection = true;
                 break;
             case 3:
                 selectedSlot = SLOT_3;
-                validSelection = 1;
+                validSelection = true;
                 break;
             case 4:
                 selectedSlot = SLOT_4;
-                validSelection = 1;
+                validSelection = true;
                 break;
             case 5:
                 selectedSlot = SLOT_5;
-                validSelection = 1;
+                validSelection = true;
                 break;
             case 6:
                 goToMainPage();
@@ -104,7 +105,7 @@ void addTheatreShow(void)
         // Check if the time slot is available
         if (checkTimeSlot("show_schedules.txt", currentShow.date, currentShow.time))
         {
-            checkForFileWrite = 1;
+            checkForFileWrite = true;
         }
         else
         {
@@ -223,7 +224,7 @@ void reserveSeat(void)
 
     // Use to get seat category
     char seatCategory[15];
-    int validSelection = 0;
+    bool validSelection = false;
     do
     {
         printf("Please enter the desired seat category (VVIP, VIP, Twin, Economy): ");
@@ -250,7 +251,7 @@ void reserveSeat(void)
     char *tokens[MAX_TOKENS];             // Array to hold tokens
     int row[MAX_TOKENS], col[MAX_TOKENS]; // Add rows and cols to change
     int rowCounter;
-    int userSeatConfirmation = 0; // Use to get confirmation of seats reservation before writing those to file
+    bool userSeatConfirmation = false; // Use to get confirmation of seats reservation before writing those to file
     int userChoice;
     char twinRow;
     int twinCol;
@@ -326,7 +327,7 @@ void reserveSeat(void)
         printf("You entered: %d\n", userChoice);
         if (userChoice == 1 && token_count > 0)
         {
-            userSeatConfirmation = 1;
+            userSeatConfirmation = true;
         }
         else if (userChoice == 3)
         {
@@ -340,7 +341,7 @@ void reserveSeat(void)
         }
         else
         {
-            userSeatConfirmation = 0;
+            userSeatConfirmation = false;
             for (int i = 0; i < token_count; i++)
             {
                 free(tokens[i]); // Free the allocated memory for each token
@@ -354,7 +355,7 @@ void reserveSeat(void)
     char action[5];
     printf("Please enter the action you need (#: Reserve with pay, o: Reserve without pay, x: Cancel reservation): ");
     // Use scanf to read the input string until newline is encountered
-    int actionValidateFlag = 0;
+    bool actionValidateFlag = 0;
     do{
         scanf(" %[^\n]", action);
         toLowerString(action);
@@ -629,17 +630,6 @@ void parseSeat(char *seat, int *row, int *col)
 }
 
 /*
-    This is used to convert the string to lower case inputs
-*/
-// void toLowerString(char *str)
-// {
-//     for (int i = 0; str[i]; i++)
-//     {
-//         str[i] = tolower((unsigned char)str[i]);
-//     }
-// }
-
-/*
     Function to initialize the seating layout of a show
 */
 void initializeShow(Show *show)
@@ -727,16 +717,16 @@ void goToMainPage(void)
 
     switch (tolower(character))
     {
-    case 'm':
-        printf("You will be redirected to the main page \n\n");
-        welcome();
-        break;
-    case 'q':
-        printf("Exiting the application \n\n");
-        break;
-    default:
-        printf("Invalid option selected, redirecting to main menu\n\n");
-        restart_program();
+        case 'm':
+            printf("You will be redirected to the main page \n\n");
+            welcome();
+            break;
+        case 'q':
+            printf("Exiting the application \n\n");
+            break;
+        default:
+            printf("Invalid option selected, redirecting to main menu\n\n");
+            restart_program();
     }
 }
 
@@ -862,7 +852,7 @@ void formatSeat(int row, int col, char *seat)
     - 1 if the seat category is valid and seats are printed.
     - 0 if the seat category is invalid.
 */
-int printAvailableSeats(Show *show, char *seatCategory)
+bool printAvailableSeats(Show *show, char *seatCategory)
 {
     if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
     {
@@ -876,7 +866,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
             printf("%s ", show->availableTwin[i].str);
         }
         printf("\n");
-        return 1;
+        return true;
     }
     else if (strcmp(seatCategory, SeatTypeStrings[VVIP]) == 0)
     {
@@ -890,7 +880,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
             printf("%s ", show->availableVVIP[i].str);
         }
         printf("\n");
-        return 1;
+        return true;
     }
     else if (strcmp(seatCategory, SeatTypeStrings[VIP]) == 0)
     {
@@ -904,7 +894,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
             printf("%s ", show->availableVIP[i].str);
         }
         printf("\n");
-        return 1;
+        return true;
     }
     else if (strcmp(seatCategory, SeatTypeStrings[ECONOMY]) == 0)
     {
@@ -918,12 +908,12 @@ int printAvailableSeats(Show *show, char *seatCategory)
             printf("%s ", show->availableEconomy[i].str);
         }
         printf("\n");
-        return 1;
+        return true;
     }
     else
     {
         printf("Invalid selection. Try again.\n");
-        return 0;
+        return false;
     }
 }
 
