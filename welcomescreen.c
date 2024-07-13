@@ -67,3 +67,11 @@ void toLowerString(char *str)
         str[i] = tolower((unsigned char)str[i]);
     }
 }
+
+void toUpperString(char *str)
+{
+    for (int i = 0; str[i]; i++)
+    {
+        str[i] = toupper((unsigned char)str[i]);
+    }
+}
