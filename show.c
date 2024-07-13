@@ -318,7 +318,7 @@ void reserveSeat(void)
         else
         {
             printf("\nThere are no seats available from given seats");
-            printf("2: Try again choose seats\n");
+            printf("\n2: Try again choose seats\n");
             printf("3: exit to main page\n");
         }
         printf("\n");
