@@ -627,13 +627,13 @@ void parseSeat(char *seat, int *row, int *col)
 /*
     This is used to convert the string to lower case inputs
 */
-void toLowerString(char *str)
-{
-    for (int i = 0; str[i]; i++)
-    {
-        str[i] = tolower((unsigned char)str[i]);
-    }
-}
+// void toLowerString(char *str)
+// {
+//     for (int i = 0; str[i]; i++)
+//     {
+//         str[i] = tolower((unsigned char)str[i]);
+//     }
+// }
 
 /*
     Function to initialize the seating layout of a show
