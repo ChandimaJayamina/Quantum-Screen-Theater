@@ -44,7 +44,14 @@ typedef enum
     SLOT_5  // 06:00 PM
 } TimeSlot;
 
+typedef enum {
+    TWIN,
+    VVIP,
+    VIP,
+    ECONOMY
+} SeatType;
 
+extern const char *SeatTypeStrings[];
 
 void addTheatreShow(void);
 
