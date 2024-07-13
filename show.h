@@ -1,57 +1,42 @@
-#include <pcre.h>
-
 // Define the number of rows and columns
 #define ROWS 17
-#define COLS 20
+#define COLS 21
+#define VVIPSEATPRICE 5000
+#define VIPSEATPRICE 2000
+#define TWINSEATPRICE 1000
+#define ECONOMYSEATPRICE 500
 
-typedef struct {
+typedef struct
+{
     char str[5];
 } Seat;
 
-typedef struct {
+typedef struct
+{
     Seat table[ROWS][COLS];
-} Theaterhall;
+} TheaterHall;
 
-
-typedef struct{
-    char id[50];     //SHAKE_VEN_16_07    
-    char name[50];   //The Merchant of Venice 
-    char time[10] ;          // we are not store it in am and pm it will handle by 24 hours and print will handle it
+typedef struct
+{
+    char id[50];
+    char name[50];
+    char time[10];
     char date[15];
 
-    Seat availableVIP[50];    //can be linked list
-    Seat availableVVIP[50];
-    Seat availableEconomy[50];
-    Seat availableTwin[50];
+    Seat availableTwin[22];
+    Seat availableVVIP[98];
+    Seat availableVIP[120];
+    Seat availableEconomy[80];
 
-    Theaterhall hall;
+    TheaterHall hall;
 
     int revenue;
 
-}Show;
-
-// int getPosition(char ch) ;
-
-// Add show to file
-void addTheatreShow(void);
-int checkTimeSlot(const char *filename, const char *date, const char *time);
-void writeShowToFile(const char *filename, Show *show);
-void initializeShow(Show *show);
-
-void displayTheatreSchedule(void);
-
-void displayTheatreReservation(void);
-void printHall(Theaterhall *hall);
-
-
-void reserveSeat(void);
-int charToNumber(char c);
-void removeWhiteSpacesandCapitalize(char *str);
-void parseSeat(char *seat, int *row, int *col);
-
+} Show;
 
 // Define an enumeration for time slots
-typedef enum {
+typedef enum
+{
     SLOT_1, // 10:00 AM
     SLOT_2, // 12:00 PM
     SLOT_3, // 02:30 PM
@@ -59,4 +44,55 @@ typedef enum {
     SLOT_5  // 06:00 PM
 } TimeSlot;
 
-const char* timeSlotToString(TimeSlot slot);
+
+
+void addTheatreShow(void);
+
+void displayTheatreSchedule(void);
+
+void displayTheatreReservation(void);
+
+void reserveSeat(void);
+
+void removeSeatFromAvailableSeats(Seat *array, int size, char *seat);
+
+int checkTimeSlot(const char *filename, const char *date, const char *time);
+
+void writeShowToFile(const char *filename, Show *show);
+
+void printHall(TheaterHall *hall);
+
+int charToNumber(char c);
+
+void removeWhiteSpacesAndCapitalize(char *str);
+
+void parseSeat(char *seat, int *row, int *col);
+
+// void toLowerString(char *str);
+
+void initializeShow(Show *show);
+
+const char *timeSlotToString(TimeSlot slot);
+
+void trimSpaces(char *str);
+
+void goToMainPage(void);
+
+void restart_program(void);
+
+void displayTheatreScheduleForDate(const char *date);
+
+void initializeSeats(Seat seats[], size_t size);
+
+void populateSeats(Show *show);
+
+void formatSeat(int row, int col, char *seat);
+
+int printAvailableSeats(Show *show, char *seatCategory);
+
+int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory);
+
+
+
+
+
