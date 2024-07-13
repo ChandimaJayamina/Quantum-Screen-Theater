@@ -229,7 +229,7 @@ void reserveSeat(void)
         printf("Please enter the desired seat category (VVIP, VIP, Twin, Economy): ");
         scanf(" %[^\n]", seatCategory);
         trimSpaces(seatCategory);
-        toLowerString(seatCategory);
+        toUpperString(seatCategory);
         // Validate user input
         validSelection = printAvailableSeats(&show, seatCategory);
     } while (!validSelection);
@@ -257,7 +257,7 @@ void reserveSeat(void)
     char nextSeat[5];
     do
     {
-        if (strcmp(seatCategory, "twin") == 0)
+        if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
         {
             printf("Since you need a twin seat, take note that booking one will select the pair! ");
         }
@@ -282,7 +282,7 @@ void reserveSeat(void)
             // Store the token in the tokens array
             if (seatsAvailabilityCheck(token, &show, seatCategory))
             {
-                if (strcmp(seatCategory, "twin") == 0)
+                if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
                 {
                     parseSeat(token, &row[token_count], &col[token_count]);
                     tokens[token_count++] = strdup(token);
@@ -330,7 +330,7 @@ void reserveSeat(void)
         }
         else if (userChoice == 3)
         {
-            if (strcmp(seatCategory, "twin") == 0){
+            if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0){
                 for (int i = 0; i < token_count; i++)
                 {
                     free(tokens[i]); // Free the allocated memory for each token
@@ -362,19 +362,19 @@ void reserveSeat(void)
         if (strcmp(action, "#") == 0)
         {
             printf("Action is: Reserve with pay\n");
-            if (strcmp(seatCategory, "vvip") == 0)
+            if (strcmp(seatCategory, SeatTypeStrings[VVIP]) == 0)
             {
                 show.revenue += token_count * VVIPSEATPRICE;
             }
-            else if (strcmp(seatCategory, "vip") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[VIP]) == 0)
             {
                 show.revenue += token_count * VIPSEATPRICE;
             }
-            else if (strcmp(seatCategory, "twin") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
             {
                 show.revenue += token_count * TWINSEATPRICE;
             }
-            else if (strcmp(seatCategory, "economy") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[ECONOMY]) == 0)
             {
                 show.revenue += token_count * ECONOMYSEATPRICE;
             }
@@ -389,7 +389,7 @@ void reserveSeat(void)
         else if (strcmp(action, "x") == 0)
         {
             printf("Action is: Cancel reservation\n");
-            if (strcmp(seatCategory, "twin") == 0)
+            if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
             {
                 for (int i = 0; i < token_count; i++)
                 {
@@ -420,20 +420,20 @@ void reserveSeat(void)
         // Remove seats from available seats array
         for (int i = 0; i < token_count; ++i)
         {
-            if (strcmp(seatCategory, "vvip") == 0)
+            if (strcmp(seatCategory, SeatTypeStrings[VVIP]) == 0)
             {
                 removeSeatFromAvailableSeats(show.availableVVIP, 98, tokens[i]);
             }
-            else if (strcmp(seatCategory, "vip") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[VIP]) == 0)
             {
                 removeSeatFromAvailableSeats(show.availableVIP, 120, tokens[i]);
             }
-            else if (strcmp(seatCategory, "twin") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
             {
                 removeSeatFromAvailableSeats(show.availableTwin, 22, tokens[i]);
                 i++; // Skip the next seat in the pair
             }
-            else if (strcmp(seatCategory, "economy") == 0)
+            else if (strcmp(seatCategory, SeatTypeStrings[ECONOMY]) == 0)
             {
                 removeSeatFromAvailableSeats(show.availableEconomy, 80, tokens[i]);
             }
@@ -451,7 +451,7 @@ void reserveSeat(void)
         }
     }
     fclose(file);
-    if (strcmp(seatCategory, "twin") == 0)
+    if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
     {
         for (int i = 0; i < token_count; i++)
         {
@@ -864,7 +864,7 @@ void formatSeat(int row, int col, char *seat)
 */
 int printAvailableSeats(Show *show, char *seatCategory)
 {
-    if (strcmp(seatCategory, "twin") == 0)
+    if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
     {
         printf("Available Twin seats:\n");
         for (int i = 0; i < 22; i++)
@@ -878,7 +878,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
         printf("\n");
         return 1;
     }
-    else if (strcmp(seatCategory, "vvip") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[VVIP]) == 0)
     {
         printf("Available VVIP seats:\n");
         for (int i = 0; i < 98; i++)
@@ -892,7 +892,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
         printf("\n");
         return 1;
     }
-    else if (strcmp(seatCategory, "vip") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[VIP]) == 0)
     {
         printf("Available VIP seats:\n");
         for (int i = 0; i < 120; i++)
@@ -906,7 +906,7 @@ int printAvailableSeats(Show *show, char *seatCategory)
         printf("\n");
         return 1;
     }
-    else if (strcmp(seatCategory, "economy") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[ECONOMY]) == 0)
     {
         printf("Available Economy seats:\n");
         for (int i = 0; i < 80; i++)
@@ -938,7 +938,7 @@ int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory)
     // Remove any white spaces and capitalize the seat string
     removeWhiteSpacesAndCapitalize(seat);
 
-    if (strcmp(seatCategory, "twin") == 0)
+    if (strcmp(seatCategory, SeatTypeStrings[TWIN]) == 0)
     {
         printf("Checking Twin Seats........\n");
         for (int i = 0; i < 22; i++)
@@ -952,7 +952,7 @@ int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory)
         printf("Seat number : %s is not available for booking \n", seat);
         return 0;
     }
-    else if (strcmp(seatCategory, "vvip") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[VVIP]) == 0)
     {
         printf("Checking VVIP Seats........\n");
         for (int i = 0; i < 98; i++)
@@ -966,7 +966,7 @@ int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory)
         printf("Seat number : %s is not available for booking \n", seat);
         return 0;
     }
-    else if (strcmp(seatCategory, "vip") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[VIP]) == 0)
     {
         printf("Checking VIP Seats........\n");
         for (int i = 0; i < 120; i++)
@@ -980,7 +980,7 @@ int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory)
         printf("Seat number : %s is not available for booking \n", seat);
         return 0;
     }
-    else if (strcmp(seatCategory, "economy") == 0)
+    else if (strcmp(seatCategory, SeatTypeStrings[ECONOMY]) == 0)
     {
         printf("Checking Economy Seats........\n");
         for (int i = 0; i < 80; i++)
