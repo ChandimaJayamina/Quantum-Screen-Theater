@@ -14,7 +14,7 @@ typedef struct
 typedef struct
 {
     Seat table[ROWS][COLS];
-} Theaterhall;
+} TheaterHall;
 
 typedef struct
 {
@@ -28,7 +28,7 @@ typedef struct
     Seat availableVIP[120];
     Seat availableEconomy[80];
 
-    Theaterhall hall;
+    TheaterHall hall;
 
     int revenue;
 
@@ -60,11 +60,11 @@ int checkTimeSlot(const char *filename, const char *date, const char *time);
 
 void writeShowToFile(const char *filename, Show *show);
 
-void printHall(Theaterhall *hall);
+void printHall(TheaterHall *hall);
 
 int charToNumber(char c);
 
-void removeWhiteSpacesandCapitalize(char *str);
+void removeWhiteSpacesAndCapitalize(char *str);
 
 void parseSeat(char *seat, int *row, int *col);
 
@@ -90,7 +90,7 @@ void formatSeat(int row, int col, char *seat);
 
 int printAvailableSeats(Show *show, char *seatCategory);
 
-int seatsAvailabiltyCheck(char *seat, Show *show, char *seatCategory);
+int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory);
 
 
 

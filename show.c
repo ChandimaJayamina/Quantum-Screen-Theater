@@ -236,8 +236,7 @@ void reserveSeat(void)
     printf("You entered: %d\n", numberofSeats);
 
     //  Use to get seats and validate those seats
-    int seatValidation = 0;
-    char checkseats[300];
+    char checkSeats[300];
     int MAX_TOKENS = 120; // Tokenize the line based on comma
     char *token;
     int token_count;
@@ -246,8 +245,8 @@ void reserveSeat(void)
     int rowCounter;
     int userSeatConfirmation = 0; // Use to get confirmation of seats reservation before writing those to file
     int userChoice;
-    char twinrow;
-    int twincol;
+    char twinRow;
+    int twinCol;
     char nextSeat[5];
     do
     {
@@ -257,8 +256,8 @@ void reserveSeat(void)
         }
         printf("Please enter the seats need to reserve by comma separate (C5, E5): ");
         // Use scanf to read the input string until newline is encountered
-        scanf(" %[^\n]", checkseats);
-        printf("You entered: %s\n", checkseats);
+        scanf(" %[^\n]", checkSeats);
+        printf("You entered: %s\n", checkSeats);
         printf("Check for the seats availability for reservation ..............\n");
         token_count = 0;
 
@@ -270,23 +269,21 @@ void reserveSeat(void)
             rowCounter++;
         }
         // Get the first token
-        token = strtok(checkseats, ",");
+        token = strtok(checkSeats, ",");
         while (token != NULL && token_count < MAX_TOKENS)
         {
-            // Check seat availability in array
-            seatValidation = seatsAvailabiltyCheck(token, &show, seatCategory);
             // Store the token in the tokens array
-            if (seatValidation)
+            if (seatsAvailabilityCheck(token, &show, seatCategory))
             {
                 if (strcmp(seatCategory, "twin") == 0)
                 {
                     parseSeat(token, &row[token_count], &col[token_count]);
                     tokens[token_count++] = strdup(token);
                     // Parse the current seat into row and number
-                    sscanf(token, "%c%d", &twinrow, &twincol);
-                    twincol++;
+                    sscanf(token, "%c%d", &twinRow, &twinCol);
+                    twinCol++;
                     // Format the next seat string
-                    snprintf(nextSeat, 5, "%c%d", twinrow, twincol);
+                    snprintf(nextSeat, 5, "%c%d", twinRow, twinCol);
                     parseSeat(nextSeat, &row[token_count], &col[token_count]);
                     tokens[token_count++] = strdup(nextSeat);
                 }
@@ -565,7 +562,7 @@ void writeShowToFile(const char *filename, Show *show)
 /*
     Function to print the seating hall layout
 */
-void printHall(Theaterhall *hall)
+void printHall(TheaterHall *hall)
 {
     for (int i = 0; i < ROWS; i++)
     {
@@ -588,7 +585,7 @@ int charToNumber(char c)
 /*
     Function to remove white spaces from a string and capitalize the first character
 */
-void removeWhiteSpacesandCapitalize(char *str)
+void removeWhiteSpacesAndCapitalize(char *str)
 {
     char *p1 = str, *p2 = str;
     // Remove white spaces
@@ -615,7 +612,7 @@ void removeWhiteSpacesandCapitalize(char *str)
 void parseSeat(char *seat, int *row, int *col)
 {
     // Remove any white spaces from the seat string
-    removeWhiteSpacesandCapitalize(seat);
+    removeWhiteSpacesAndCapitalize(seat);
 
     // Convert the row character to an integer (A -> 1, B -> 2, ..., Z -> 26)
     *row = seat[0] - 'A' + 1;
@@ -929,10 +926,10 @@ int printAvailableSeats(Show *show, char *seatCategory)
     - 1 if the seat is available for reservation.
     - 0 if the seat is not available for reservation.
 */
-int seatsAvailabiltyCheck(char *seat, Show *show, char *seatCategory)
+int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory)
 {
     // Remove any white spaces and capitalize the seat string
-    removeWhiteSpacesandCapitalize(seat);
+    removeWhiteSpacesAndCapitalize(seat);
 
     if (strcmp(seatCategory, "twin") == 0)
     {
