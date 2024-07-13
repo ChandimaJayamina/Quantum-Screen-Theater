@@ -213,12 +213,9 @@ void reserveSeat(void)
             break;
         }
     }
-    printf("show date %s\n", show.date);
-    printf("A1 seat: %s\n", show.hall.table[1][1].str);
 
     // Use to get seat category
     char seatCategory[15];
-    printf("You entered: %s\n", seatCategory);
     int validSelection = 0;
     do
     {
