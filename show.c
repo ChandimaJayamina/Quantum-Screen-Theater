@@ -119,8 +119,6 @@ void addTheatreShow(void)
     initializeSeats(currentShow.availableVIP, sizeof(currentShow.availableVIP) / sizeof(currentShow.availableVIP[0]));
     initializeSeats(currentShow.availableEconomy, sizeof(currentShow.availableEconomy) / sizeof(currentShow.availableEconomy[0]));
     populateSeats(&currentShow);
-    printf("Twin seat 1: %s\n", currentShow.availableTwin[0].str);
-    printf("Twin seat 21: %s\n", currentShow.availableTwin[20].str);
 
     // Write show to file if time slot is available
     if (checkForFileWrite)
@@ -189,7 +187,7 @@ void displayTheatreSchedule(void)
 */
 void reserveSeat(void)
 {
-
+    printf("----- Reserve Seat ----- \n");
     // Use to get show id
     char showId[15];
     printf("Please enter the show ID: ");
