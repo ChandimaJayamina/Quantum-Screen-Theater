@@ -12,7 +12,7 @@ This project implements a theater seat reservation system in C. The system allow
 
 ## Group Members
 
-Chandima - 2023/MCS/009 \n
+Chandima - 2023/MCS/009 <br>
 Christina - 2023/MCS/069
 Dumindu - 2023/MCS/055
 Sajith - 2023/MCS/073
