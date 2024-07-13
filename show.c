@@ -350,50 +350,61 @@ void reserveSeat(void)
     char action[5];
     printf("Please enter the action you need (#: Reserve with pay, o: Reserve without pay, x: Cancel reservation): ");
     // Use scanf to read the input string until newline is encountered
-    scanf(" %[^\n]", action);
-    toLowerString(action);
-    printf("You entered: %s\n", action);
-    if (strcmp(action, "#") == 0)
-    {
-        printf("Action is: Reserve with pay\n");
-        if (strcmp(seatCategory, "vvip") == 0)
+    int actionValidateFlag = 0;
+    do{
+        scanf(" %[^\n]", action);
+        toLowerString(action);
+        printf("You entered: %s\n", action);
+        if (strcmp(action, "#") == 0)
         {
-            show.revenue += token_count * 5000;
+            printf("Action is: Reserve with pay\n");
+            if (strcmp(seatCategory, "vvip") == 0)
+            {
+                show.revenue += token_count * 5000;
+            }
+            else if (strcmp(seatCategory, "vip") == 0)
+            {
+                show.revenue += token_count * 2000;
+            }
+            else if (strcmp(seatCategory, "twin") == 0)
+            {
+                show.revenue += token_count * 1000;
+            }
+            else if (strcmp(seatCategory, "economy") == 0)
+            {
+                show.revenue += token_count * 500;
+            }
+            actionValidateFlag = 1;
         }
-        else if (strcmp(seatCategory, "vip") == 0)
+        else if (strcmp(action, "o") == 0 || strcmp(action, "0") == 0)
         {
-            show.revenue += token_count * 2000;
+            strcpy(action, "o");
+            printf("Action is: Reserve without pay\n");
+            actionValidateFlag = 1;
         }
-        else if (strcmp(seatCategory, "twin") == 0)
+        else if (strcmp(action, "x") == 0)
         {
-            show.revenue += token_count * 1000;
+            printf("Action is: Cancel reservation\n");
+            if (strcmp(seatCategory, "twin") == 0)
+            {
+                for (int i = 0; i < token_count; i++)
+                {
+                    free(tokens[i]); // Free the allocated memory for each token
+                }
+            }
+            goToMainPage();
         }
-        else if (strcmp(seatCategory, "economy") == 0)
+        else
         {
-            show.revenue += token_count * 500;
+            printf("Character wasn't recognized");
         }
-    }
-    else if (strcmp(action, "o") == 0 || strcmp(action, "0") == 0)
-    {
-        strcpy(action, "o");
-        printf("Action is: Reserve without pay\n");
-    }
-    else if (strcmp(action, "x") == 0)
-    {
-        printf("Action is: Cancel reservation\n");
-        goToMainPage();
-    }
-    else
-    {
-        printf("Character wasn't recognized");
-        goToMainPage();
-    }
+    } while(!actionValidateFlag);
     // Move existing characters to make space for an additional character
     memmove(action + 1, action, strlen(action) + 1);
     // Set the first character to a space
     action[0] = ' ';
 
-    // Change seat
+    // Change seats in thater
     if (index != -1)
     {
         for (int i = 0; i < token_count; ++i)
