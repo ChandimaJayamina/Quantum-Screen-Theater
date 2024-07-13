@@ -5,5 +5,4 @@
 // main user interface
 void welcome(void);
 
-// User option categarizer
-void operationIdentifier(void);
+void toLowerString(char *str);
