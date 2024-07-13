@@ -1,6 +1,10 @@
 // Define the number of rows and columns
 #define ROWS 17
 #define COLS 21
+#define VVIPSEATPRICE 5000
+#define VIPSEATPRICE 2000
+#define TWINSEATPRICE 1000
+#define ECONOMYSEATPRICE 500
 
 typedef struct
 {
