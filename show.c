@@ -7,6 +7,13 @@
 #include "welcomescreen.h"
 #include "validations.h"
 
+const char *SeatTypeStrings[] = {
+    "TWIN",
+    "VVIP",
+    "VIP",
+    "ECONOMY"
+};
+
 /*
     This function is defined to handle adding a theater show to the file.
 */
