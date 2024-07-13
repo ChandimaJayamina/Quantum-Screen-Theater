@@ -237,8 +237,8 @@ void reserveSeat(void)
     printf("You entered: %s\n", seatCategory);
 
     //  Use to get number of seats
-    int numberofSeats;
-    printf("Please enter the number of seats required: ");
+    // int numberofSeats;
+    // printf("Please enter the number of seats required: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %d", &numberofSeats);
     printf("You entered: %d\n", numberofSeats);
