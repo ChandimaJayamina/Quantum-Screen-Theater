@@ -240,8 +240,8 @@ void reserveSeat(void)
     // int numberofSeats;
     // printf("Please enter the number of seats required: ");
     // Use scanf to read the input string until newline is encountered
-    scanf(" %d", &numberofSeats);
-    printf("You entered: %d\n", numberofSeats);
+    // scanf(" %d", &numberofSeats);
+    // printf("You entered: %d\n", numberofSeats);
 
     //  Use to get seats and validate those seats
     char checkSeats[300];
