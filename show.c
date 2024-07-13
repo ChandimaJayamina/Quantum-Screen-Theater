@@ -360,19 +360,19 @@ void reserveSeat(void)
             printf("Action is: Reserve with pay\n");
             if (strcmp(seatCategory, "vvip") == 0)
             {
-                show.revenue += token_count * 5000;
+                show.revenue += token_count * VVIPSEATPRICE;
             }
             else if (strcmp(seatCategory, "vip") == 0)
             {
-                show.revenue += token_count * 2000;
+                show.revenue += token_count * VIPSEATPRICE;
             }
             else if (strcmp(seatCategory, "twin") == 0)
             {
-                show.revenue += token_count * 1000;
+                show.revenue += token_count * TWINSEATPRICE;
             }
             else if (strcmp(seatCategory, "economy") == 0)
             {
-                show.revenue += token_count * 500;
+                show.revenue += token_count * ECONOMYSEATPRICE;
             }
             actionValidateFlag = 1;
         }
