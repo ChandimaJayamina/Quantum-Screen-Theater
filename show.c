@@ -228,18 +228,14 @@ void reserveSeat(void)
     } while (!validSelection);
     printf("You entered: %s\n", seatCategory);
 
-    /*
-        Use to get number of seats
-    */
+    //  Use to get number of seats
     int numberofSeats;
     printf("Please enter the number of seats required: ");
     // Use scanf to read the input string until newline is encountered
     scanf(" %d", &numberofSeats);
     printf("You entered: %d\n", numberofSeats);
 
-    /*
-        Use to get seats and validate those seats
-    */
+    //  Use to get seats and validate those seats
     int seatValidation = 0;
     char checkseats[300];
     int MAX_TOKENS = 120; // Tokenize the line based on comma
@@ -330,6 +326,12 @@ void reserveSeat(void)
         }
         else if (userChoice == 3)
         {
+            if (strcmp(seatCategory, "twin") == 0){
+                for (int i = 0; i < token_count; i++)
+                {
+                    free(tokens[i]); // Free the allocated memory for each token
+                }
+            }
             goToMainPage();
         }
         else
