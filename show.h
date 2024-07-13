@@ -2,19 +2,21 @@
 #define ROWS 17
 #define COLS 21
 
-typedef struct {
+typedef struct
+{
     char str[5];
 } Seat;
 
-typedef struct {
+typedef struct
+{
     Seat table[ROWS][COLS];
 } Theaterhall;
 
-
-typedef struct{
-    char id[50];       
-    char name[50];  
-    char time[10] ;        
+typedef struct
+{
+    char id[50];
+    char name[50];
+    char time[10];
     char date[15];
 
     Seat availableTwin[22];
@@ -26,9 +28,8 @@ typedef struct{
 
     int revenue;
 
-}Show;
+} Show;
 
-// int getPosition(char ch) ;
 
 // Add show to file
 void addTheatreShow(void);
@@ -41,15 +42,14 @@ void displayTheatreSchedule(void);
 void displayTheatreReservation(void);
 void printHall(Theaterhall *hall);
 
-
 void reserveSeat(void);
 int charToNumber(char c);
 void removeWhiteSpacesandCapitalize(char *str);
 void parseSeat(char *seat, int *row, int *col);
 
-
 // Define an enumeration for time slots
-typedef enum {
+typedef enum
+{
     SLOT_1, // 10:00 AM
     SLOT_2, // 12:00 PM
     SLOT_3, // 02:30 PM
@@ -57,10 +57,10 @@ typedef enum {
     SLOT_5  // 06:00 PM
 } TimeSlot;
 
-const char* timeSlotToString(TimeSlot slot);
+const char *timeSlotToString(TimeSlot slot);
 void toLowerString(char *str);
 void initializeShow(Show *show);
-const char* timeSlotToString(TimeSlot slot);
+const char *timeSlotToString(TimeSlot slot);
 void trimSpaces(char *str);
 void goToMainPage(void);
 void restart_program(void);
@@ -72,4 +72,4 @@ void formatSeat(int row, int col, char *seat);
 void findAvailableSeats(Theaterhall *hall);
 void populateSeats(Show *show);
 int printAvailableSeats(Show *show, char *seatCategory);
-void removeSeatFromArray(Seat* array, int size, char* seat);
+void removeSeatFromAvailableSeats(Seat *array, int size, char *seat);
