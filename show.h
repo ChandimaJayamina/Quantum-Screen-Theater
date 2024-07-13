@@ -1,3 +1,5 @@
+#include <stdbool.h> 
+
 // Define the number of rows and columns
 #define ROWS 17
 #define COLS 21
@@ -44,6 +46,14 @@ typedef enum
     SLOT_5  // 06:00 PM
 } TimeSlot;
 
+typedef enum {
+    TWIN,
+    VVIP,
+    VIP,
+    ECONOMY
+} SeatType;
+
+extern const char *SeatTypeStrings[];
 
 
 void addTheatreShow(void);
@@ -88,7 +98,7 @@ void populateSeats(Show *show);
 
 void formatSeat(int row, int col, char *seat);
 
-int printAvailableSeats(Show *show, char *seatCategory);
+bool printAvailableSeats(Show *show, char *seatCategory);
 
 int seatsAvailabilityCheck(char *seat, Show *show, char *seatCategory);
 
