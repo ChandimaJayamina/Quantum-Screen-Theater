@@ -68,7 +68,7 @@ void removeWhiteSpacesandCapitalize(char *str);
 
 void parseSeat(char *seat, int *row, int *col);
 
-void toLowerString(char *str);
+// void toLowerString(char *str);
 
 void initializeShow(Show *show);
 
