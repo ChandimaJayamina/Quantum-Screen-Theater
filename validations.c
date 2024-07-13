@@ -15,10 +15,10 @@ int isValidDate(char *date)
         return 0; // Unable to parse the date
     }
 
-    time_t now = time(NULL);
+    //time_t now = time(NULL);
 
     // Convert it to local time representation
-    struct tm *local = localtime(&now);
+    //struct tm *local = localtime(&now);
 
     if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31)
     {
