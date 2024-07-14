@@ -4,11 +4,14 @@ This project has been developed as a submission for Assigment 02 of Principles o
 
 This project implements a theater seat reservation system in C. The system allows users add shows to the schedule, to reserve seats for a show with different seat categories (Economy, Twin, VIP, and VVIP) available and view reservations. The reservation process updates the show's revenue and updates the seat availability.
 
-## To Compile
-- gcc -o app app.c welcomescreen.c show.c validations.c
+## To Compile the program and create app.exe
+- Make
 
-## To Run the Program
-- ./app
+## To run the app instance
+- Make run
+
+## To delete app.exe
+- Make clean
 
 ## Group Members
 
